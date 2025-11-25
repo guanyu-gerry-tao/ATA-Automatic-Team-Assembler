@@ -36,6 +36,26 @@ class Student:
         self.other_prompts = other_prompts
         self.have, self.want = self.construct_vector()
 
+
+    def get_json(self):
+        return {
+            "uid": self.uid,
+            "student_ip": self.student_ip,
+            "first_name": self.first_name,
+            "email": self.email,
+            "skill_level": self.skill_level,
+            "ambition": self.ambition,
+            "role": self.role,
+            "teamwork_style": self.teamwork_style,
+            "pace": self.pace,
+            "backgrounds": list(self.backgrounds),
+            "backgrounds_preference": self.backgrounds_preference,
+            "hobbies": list(self.hobbies),
+            "project_summary": self.project_summary,
+            "other_prompts": self.other_prompts
+        }
+
+
     def construct_vector(self) -> tuple[np.ndarray, np.ndarray]:
         """
         Using this function to construct a vector for a student
