@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Information Form - ATA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 40px;
+            margin-top: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        /* Question title bubble style */
+        .question-label {
+            display: block;
+            width: 100%;
+            background: #f5f5f7;
+            color: #333;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+        }
+        
+        .question-label::before {
+            content: attr(data-question-number);
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.15);
+            color: #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            margin-right: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            vertical-align: middle;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .radio-item input[type="radio"] {
+            width: auto;
+        }
+        
+        .radio-item label,
+        .checkbox-item label {
+            display: inline;
+            margin-bottom: 0;
+            font-weight: 400;
+            color: #333;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            margin-top: 5px;
+            font-size: 13px;
+        }
+        
+        .success-message {
+            color: #27ae60;
+            margin-top: 10px;
+            padding: 12px;
+            background: #d4edda;
+            border-radius: 6px;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 Student Information Form</h1>
+        <p class="subtitle">Please fill in the following information to help us match you with suitable team members</p>
+        
+        <div id="loadingCheck" class="loading">Checking status...</div>
+        
+        <form id="studentForm" style="display: none;">
+            <!-- Basic Information -->
+            <div class="form-group">
+                <label for="first_name" class="question-label" data-question-number="1">👤 Name *</label>
+                <input type="text" id="first_name" name="first_name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email" class="question-label" data-question-number="2">📧 Email *</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <!-- Skill Level -->
+            <div class="form-group">
+                <label class="question-label" data-question-number="3">🎯 Skill Level *</label>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="skill_0" name="skill_level" value="0" required>
+                        <label for="skill_0">🌱 Beginner (noob)</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="skill_1" name="skill_level" value="1">
+                        <label for="skill_1">⭐ Intermediate (ok)</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="skill_2" name="skill_level" value="2">
+                        <label for="skill_2">🚀 Professional (pro)</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ambition -->
+            <div class="form-group">
+                <label class="question-label" data-question-number="4">🎯 Learning Goal *</label>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="ambition_0" name="ambition" value="0" required>
+                        <label for="ambition_0">✅ Just Pass (just_pass)</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="ambition_1" name="ambition" value="1">
+                        <label for="ambition_1">🌟 Pursue Excellence (ambitious)</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Role Preference -->
+            <div class="form-group">
+                <label class="question-label" data-question-number="5">👥 Role Preference</label>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="role_0" name="role" value="0">
+                        <label for="role_0">👑 Leader</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="role_1" name="role" value="1">
+                        <label for="role_1">🤝 Follower</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="role_none" name="role" value="" checked>
+                        <label for="role_none">🤷 No Preference</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Teamwork Style -->
+            <div class="form-group">
+                <label class="question-label" data-question-number="6">🤝 Teamwork Style Preference</label>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="teamwork_0" name="teamwork_style" value="0">
+                        <label for="teamwork_0">💻 Online Meeting</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="teamwork_1" name="teamwork_style" value="1">
+                        <label for="teamwork_1">🤝 Offline Meeting</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="teamwork_2" name="teamwork_style" value="2">
+                        <label for="teamwork_2">🧩 Divide and Conquer</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="teamwork_none" name="teamwork_style" value="" checked>
+                        <label for="teamwork_none">🤷 No Preference</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pace Preference -->
+            <div class="form-group">
+                <label class="question-label" data-question-number="7">⏱️ Pace Preference</label>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="pace_0" name="pace" value="0">
+                        <label for="pace_0">⚡ Finish Early</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="pace_1" name="pace" value="1">
+                        <label for="pace_1">🕐 Finish Late</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="pace_2" name="pace" value="2">
+                        <label for="pace_2">📈 Little by Little</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="pace_none" name="pace" value="" checked>
+                        <label for="pace_none">🤷 No Preference</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Backgrounds -->
+            <div class="form-group">
+                <label class="question-label" data-question-number="8">💼 Professional Background (Multiple Selection)</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="bg_0" name="backgrounds" value="0">
+                        <label for="bg_0">💻 Technology/Math</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="bg_1" name="backgrounds" value="1">
+                        <label for="bg_1">💰 Finance</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="bg_2" name="backgrounds" value="2">
+                        <label for="bg_2">💼 Consulting</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="bg_3" name="backgrounds" value="3">
+                        <label for="bg_3">🔬 Healthcare & Biotech</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="bg_4" name="backgrounds" value="4">
+                        <label for="bg_4">📚 Education & Research</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="bg_5" name="backgrounds" value="5">
+                        <label for="bg_5">🎨 Arts, Media & Design</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="bg_6" name="backgrounds" value="6">
+                        <label for="bg_6">🏗️ Architecture & Engineering</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="bg_7" name="backgrounds" value="7">
+                        <label for="bg_7">📊 Business & Operations</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="bg_8" name="backgrounds" value="8">
+                        <label for="bg_8">➕ Others</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Background Preference -->
+            <div class="form-group">
+                <label class="question-label" data-question-number="9">🌐 Teammate Background Preference</label>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="bg_pref_0" name="backgrounds_preference" value="0" checked>
+                        <label for="bg_pref_0">👥 Similar Backgrounds</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="bg_pref_1" name="backgrounds_preference" value="1">
+                        <label for="bg_pref_1">🌈 Different Backgrounds</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hobbies -->
+            <div class="form-group">
+                <label class="question-label" data-question-number="10">🎨 Hobbies (Multiple Selection)</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hobby_0" name="hobbies" value="0">
+                        <label for="hobby_0">🎮 Gaming</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hobby_1" name="hobbies" value="1">
+                        <label for="hobby_1">⚽ Outdoor Sports & Fitness</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hobby_2" name="hobbies" value="2">
+                        <label for="hobby_2">✈️ Travel & Adventure</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hobby_3" name="hobbies" value="3">
+                        <label for="hobby_3">🔧 Tech & DIY</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hobby_4" name="hobbies" value="4">
+                        <label for="hobby_4">🎨 Arts & Media</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hobby_5" name="hobbies" value="5">
+                        <label for="hobby_5">🍳 Food & Cooking</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hobby_6" name="hobbies" value="6">
+                        <label for="hobby_6">🎵 Music & Performing</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Project Summary -->
+            <div class="form-group">
+                <label for="project_summary" class="question-label" data-question-number="11">📝 Project Summary *</label>
+                <textarea id="project_summary" name="project_summary" required placeholder="Please describe your project ideas or expectations for the team..."></textarea>
+            </div>
+            
+            <!-- Other Prompts -->
+            <div class="form-group">
+                <label for="other_prompts" class="question-label" data-question-number="12">💬 Additional Notes</label>
+                <textarea id="other_prompts" name="other_prompts" placeholder="Any other information you'd like to share..."></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">🚀 Submit Information</button>
+            <div id="message"></div>
+        </form>
+    </div>
+    
+    <script>
+        // Configure backend API URL (modify when deploying)
+        const API_BASE_URL = 'http://localhost:8000';  // Change to actual backend URL in production
+        
+        // Periodically check for results (every 1 second)
+        let checkInterval = null;
+        function checkResultPeriodically(email) {
+            // Clear any existing interval
+            if (checkInterval) {
+                clearInterval(checkInterval);
+            }
+            
+            checkInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/check_status?email=${encodeURIComponent(email)}`);
+                    
+                    if (!response.ok) {
+                        console.error('Failed to check status:', response.status, response.statusText);
+                        return;
+                    }
+                    
+                    const data = await response.json();
+                    console.log('Status check result:', data); // Debug log
+                    
+                    // Check if has_result is true (could be boolean or truthy value)
+                    if (data.has_result === true || data.has_result === 'true') {
+                        clearInterval(checkInterval);
+                        console.log('Results found! Redirecting...'); // Debug log
+                        window.location.href = 'result.html';
+                    }
+                } catch (error) {
+                    console.error('Failed to check results:', error);
+                }
+            }, 1000);
+        }
+        
+        // Check status when page loads
+        window.addEventListener('DOMContentLoaded', async () => {
+            const savedEmail = localStorage.getItem('studentEmail');
+            
+            if (savedEmail) {
+                // If saved email exists, check if there are results
+                try {
+                    const response = await fetch(`${API_BASE_URL}/check_status?email=${encodeURIComponent(savedEmail)}`);
+                    
+                    if (!response.ok) {
+                        console.error('Failed to check status on load:', response.status, response.statusText);
+                    } else {
+                        const data = await response.json();
+                        console.log('Initial status check:', data); // Debug log
+                        
+                        // Check if has_result is true
+                        if (data.has_result === true || data.has_result === 'true') {
+                            // Has results, redirect to results page
+                            console.log('Results found on page load! Redirecting...'); // Debug log
+                            window.location.href = 'result.html';
+                            return;
+                        } else {
+                            // No results yet, but email exists - start polling
+                            checkResultPeriodically(savedEmail);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to check status:', error);
+                }
+            }
+            
+            // Show form (can be updated if email exists)
+            document.getElementById('loadingCheck').style.display = 'none';
+            document.getElementById('studentForm').style.display = 'block';
+            
+            // If saved email exists, pre-fill the email field
+            if (savedEmail) {
+                document.getElementById('email').value = savedEmail;
+            }
+        });
+        
+        // Form submission
+        document.getElementById('studentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const messageDiv = document.getElementById('message');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Submitting...';
+            messageDiv.innerHTML = '';
+            
+            // Collect form data
+            const formData = {
+                first_name: document.getElementById('first_name').value,
+                email: document.getElementById('email').value,
+                skill_level: parseInt(document.querySelector('input[name="skill_level"]:checked').value),
+                ambition: parseInt(document.querySelector('input[name="ambition"]:checked').value),
+                role: (() => {
+                    const val = document.querySelector('input[name="role"]:checked').value;
+                    return val === '' ? null : parseInt(val);
+                })(),
+                teamwork_style: (() => {
+                    const val = document.querySelector('input[name="teamwork_style"]:checked').value;
+                    return val === '' ? null : parseInt(val);
+                })(),
+                pace: (() => {
+                    const val = document.querySelector('input[name="pace"]:checked').value;
+                    return val === '' ? null : parseInt(val);
+                })(),
+                backgrounds: Array.from(document.querySelectorAll('input[name="backgrounds"]:checked')).map(cb => parseInt(cb.value)),
+                backgrounds_preference: parseInt(document.querySelector('input[name="backgrounds_preference"]:checked').value),
+                hobbies: Array.from(document.querySelectorAll('input[name="hobbies"]:checked')).map(cb => parseInt(cb.value)),
+                project_summary: document.getElementById('project_summary').value,
+                other_prompts: document.getElementById('other_prompts').value || ''
+            };
+            
+            try {
+                // Use FormData to send data (backend expects Form data)
+                const formDataToSend = new FormData();
+                formDataToSend.append('data', JSON.stringify(formData));
+                
+                const response = await fetch(`${API_BASE_URL}/student_submit`, {
+                    method: 'POST',
+                    body: formDataToSend
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'ok') {
+                    // Save email to localStorage
+                    localStorage.setItem('studentEmail', formData.email);
+                    
+                    messageDiv.innerHTML = '<div class="success-message">✅ Submission successful! Please wait for the instructor to perform team matching. Results will appear automatically when ready.</div>';
+                    
+                    // Don't clear form - allow user to update if needed
+                    
+                    // Check immediately first, then start polling
+                    try {
+                        const statusResponse = await fetch(`${API_BASE_URL}/check_status?email=${encodeURIComponent(formData.email)}`);
+                        
+                        if (!statusResponse.ok) {
+                            console.error('Failed to check status:', statusResponse.status, statusResponse.statusText);
+                        } else {
+                            const statusData = await statusResponse.json();
+                            console.log('Immediate status check:', statusData); // Debug log
+                            
+                            // Check if has_result is true
+                            if (statusData.has_result === true || statusData.has_result === 'true') {
+                                console.log('Results found immediately! Redirecting...'); // Debug log
+                                window.location.href = 'result.html';
+                                return;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Failed to check status immediately:', error);
+                    }
+                    
+                    // Start polling for results
+                    checkResultPeriodically(formData.email);
+                } else {
+                    throw new Error('Submission failed');
+                }
+            } catch (error) {
+                messageDiv.innerHTML = `<div class="error-message">❌ Submission failed: ${error.message}</div>`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 Submit Information';
+            }
+        });
+        
+    </script>
+</body>
+</html>

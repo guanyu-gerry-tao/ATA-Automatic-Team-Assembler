@@ -8,6 +8,29 @@ services:
       - 8000:8000
     environment:
       - PYTHONUNBUFFERED=1
+      - MODE=api
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./data:/app/data
+      - ./ATA/student_data:/app/ATA/student_data
+
+  console:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ata-console
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MODE=console
+    stdin_open: true
+    tty: true
+    depends_on:
+      - api
+    volumes:
+      - ./ATA:/app/ATA
+      - ./data:/app/data
+      - ./ATA/student_data:/app/ATA/student_data
 
   # db:
   #   image: postgres:latest

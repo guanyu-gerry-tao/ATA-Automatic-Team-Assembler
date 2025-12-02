@@ -27,7 +27,35 @@ def return_all_students_name() -> list[str]:
     return students_name
 
 
-q = """
+def upload_test_data():
+    with open("test/test_user.json", "r") as f:
+        data = json.load(f)
+    course = pickle_ops.load_data()
+    
+    # create student objects
+    student_objects = []
+    for student_data in data["students"].values():
+        student = Student(
+            first_name=student_data["first_name"],
+            email=student_data["email"],
+            skill_level=student_data["skill_level"],
+            ambition=student_data["ambition"],
+            role=student_data["role"],
+            teamwork_style=student_data["teamwork_style"],
+            pace=student_data["pace"],
+            backgrounds=set(student_data["backgrounds"]),  # convert list to set
+            backgrounds_preference=student_data["backgrounds_preference"],
+            hobbies=set(student_data["hobbies"]),  # convert list to set
+            project_summary=student_data["project_summary"],
+            other_prompts=student_data["other_prompts"],
+        )
+        student_objects.append(student)
+    
+    course.add_students(student_objects)
+    pickle_ops.save_data(course)
+
+
+q = """_____________________________________
 Please enter the following command:
 S - current students
 T - team matching
@@ -64,10 +92,7 @@ def main():
                 pickle_ops.save_data(course)
                 print("System has been reset.")
         elif inp.lower() == "test":
-            with open("test/test_user.json", "r") as f:
-                data = json.load(f)
-            for student in data["students"].values():
-                requests.post("http://localhost:8000/student_submit", data={"data": json.dumps(student)})
+            upload_test_data()
             print("Test data uploaded.")
         else:
             print("Invalid command, please try again.")

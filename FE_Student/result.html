@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Matching Results - ATA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 5px;
+        }
+        
+        .container {
+            max-width: 98%;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px 15px;
+            margin-top: 5px;
+        }
+        
+        @media (min-width: 1600px) {
+            .container {
+                max-width: 1600px;
+                padding: 40px 20px;
+            }
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 26px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 40px;
+            font-size: 18px;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            padding: 20px;
+            background: #fee;
+            border-radius: 6px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .team-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px 20px;
+            margin-bottom: 30px;
+        }
+        
+        .team-title {
+            font-size: 22px;
+            color: #667eea;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .teammates-list {
+            display: grid;
+            gap: 25px;
+        }
+        
+        .teammate-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 25px 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .teammate-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .teammate-name {
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .teammate-email {
+            font-size: 15px;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .teammate-summary {
+            color: #666;
+            line-height: 2;
+            font-size: 15px;
+        }
+        
+        .ai-suggestion {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 25px 20px;
+            margin-top: 30px;
+        }
+        
+        .ai-suggestion-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .ai-suggestion-content {
+            color: #666;
+            line-height: 1.8;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        
+        .refresh-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+        }
+        
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        
+        .back-btn:hover {
+            background: #5a6268;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .empty-state h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Team Matching Results</h1>
+        <p class="subtitle">Below is your team member information</p>
+        
+        <div id="loading" class="loading">Loading results...</div>
+        
+        <div id="content" style="display: none;">
+            <div id="teamInfo"></div>
+            <button class="refresh-btn" onclick="loadResult()">Refresh Results</button>
+            <a href="index.html" class="back-btn">Back to Form</a>
+        </div>
+        
+        <div id="error" style="display: none;"></div>
+    </div>
+    
+    <script>
+        // Configure backend API URL (modify when deploying)
+        const API_BASE_URL = 'http://localhost:8000';  // Change to actual backend URL in production
+        
+        // Load results
+        async function loadResult() {
+            const loading = document.getElementById('loading');
+            const content = document.getElementById('content');
+            const error = document.getElementById('error');
+            const teamInfo = document.getElementById('teamInfo');
+            
+            // Show loading, hide others
+            loading.style.display = 'block';
+            content.style.display = 'none';
+            error.style.display = 'none';
+            
+            // Get saved email
+            const email = localStorage.getItem('studentEmail');
+            
+            if (!email) {
+                loading.style.display = 'none';
+                error.style.display = 'block';
+                error.innerHTML = `
+                    <div class="error-message">
+                        <p>❌ Email not found. Please fill out the form first.</p>
+                        <a href="index.html" class="back-btn" style="display: inline-block; margin-top: 10px;">Go to Form</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            try {
+                // First check if results exist
+                const statusResponse = await fetch(`${API_BASE_URL}/check_status?email=${encodeURIComponent(email)}`);
+                const statusData = await statusResponse.json();
+                
+                if (!statusData.has_result) {
+                    // No results yet, notify user
+                    loading.style.display = 'none';
+                    error.style.display = 'block';
+                    error.innerHTML = `
+                        <div class="error-message">
+                            <p>⏳ Results are not ready yet. Please wait for the instructor to complete team matching.</p>
+                            <p style="margin-top: 10px; font-size: 14px;">After matching is complete, refresh this page to view your results.</p>
+                            <button class="refresh-btn" onclick="loadResult()" style="margin-top: 15px;">Refresh Check</button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Get results
+                const response = await fetch(`${API_BASE_URL}/result?email=${encodeURIComponent(email)}`);
+                const data = await response.json();
+                
+                if (data.status === 'ok' && data.teammates_name && data.teammates_name.length > 0) {
+                    // Display results
+                    let html = '<div class="team-info">';
+                    html += '<div class="team-title">👥 Your Team Members</div>';
+                    html += '<div class="teammates-list">';
+                    
+                    data.teammates_name.forEach((name, index) => {
+                        const email = data.teammates_email && data.teammates_email[index] ? data.teammates_email[index] : '';
+                        const summary = data.teammates_proj_summary[index] || 'No project summary provided';
+                        html += `
+                            <div class="teammate-card">
+                                <div class="teammate-name">${name}</div>
+                                ${email ? `<div class="teammate-email">📧 ${email}</div>` : ''}
+                                <div class="teammate-summary">${summary}</div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div></div>';
+                    
+                    // Add AI suggestion section
+                    if (data.ai_suggestion) {
+                        html += `
+                            <div class="ai-suggestion">
+                                <div class="ai-suggestion-title">🤖 AI-Generated Suggestion</div>
+                                <div class="ai-suggestion-content">${data.ai_suggestion}</div>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="ai-suggestion">
+                                <div class="ai-suggestion-title">🤖 AI-Generated Suggestion</div>
+                                <div class="ai-suggestion-content">AI suggestions will appear here after team matching is complete.</div>
+                            </div>
+                        `;
+                    }
+                    
+                    teamInfo.innerHTML = html;
+                    
+                    loading.style.display = 'none';
+                    content.style.display = 'block';
+                } else {
+                    throw new Error('Invalid result data format');
+                }
+            } catch (error) {
+                console.error('Failed to load results:', error);
+                loading.style.display = 'none';
+                error.style.display = 'block';
+                error.innerHTML = `
+                    <div class="error-message">
+                        <p>❌ Failed to load results: ${error.message}</p>
+                        <p style="margin-top: 10px; font-size: 14px;">Please check your network connection or contact the administrator.</p>
+                        <button class="refresh-btn" onclick="loadResult()" style="margin-top: 15px;">Retry</button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Automatically load results when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            loadResult();
+        });
+    </script>
+</body>
+</html>

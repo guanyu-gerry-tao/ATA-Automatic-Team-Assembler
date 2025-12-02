@@ -168,6 +168,9 @@ class Team:
     def __init__(self, team_id: str, students: list[Student]):
         self.team_id = team_id
         self.students = students
+        # Set team_id for all students in the team
+        for student in students:
+            student.team_id = team_id
         self.vector_have, self.vector_want = np.array([]), np.array([])
         self.__generate_have_want()
         self.score_matrix_with_rest_of_students = np.array([])
@@ -193,6 +196,8 @@ class Team:
         :return:
         '''
         self.students.append(student)
+        # Set team_id for the student
+        student.team_id = self.team_id
         self.__generate_have_want()  # recalculate the have and want vector
         self.mutual_crush_score_with_rest_of_students(self.students)  # recalculate the mutual crush score
 
@@ -262,6 +267,47 @@ class Course:
         self.__generate_have_want_arrays()  # generate array_of_have and array_of_want after each time new students are added
         self.__crush_matrix()  # calculate the score matrix after each time new students are added
         self.__mutual_crush_score()  # calculate the mutual crush score list after each time new students are added
+
+    def update_student(self, new_student: Student):
+        '''
+        Update an existing student's information by email. If student doesn't exist, add them.
+        :param new_student: Student instance with updated information
+        :return:
+        '''
+        try:
+            existing_student = self.get_student_by_email(new_student.email)
+            # Preserve team_id if student is already in a team
+            new_student.team_id = existing_student.team_id
+            
+            # Update the student in the students list
+            student_index = self.students.index(existing_student)
+            self.students[student_index] = new_student
+            
+            # Update in student_not_in_team list if applicable
+            if existing_student in self.student_not_in_team:
+                not_in_team_index = self.student_not_in_team.index(existing_student)
+                if new_student.team_id is None:
+                    self.student_not_in_team[not_in_team_index] = new_student
+                else:
+                    # If student has a team_id, remove from not_in_team list
+                    self.student_not_in_team.remove(existing_student)
+            
+            # If student is in a team, update the team's student reference
+            if existing_student.team_id is not None:
+                team = self.get_team_by_team_id(existing_student.team_id)
+                team_index = team.students.index(existing_student)
+                team.students[team_index] = new_student
+                team.__generate_have_want()  # Recalculate team vectors
+            
+        except ValueError:
+            # Student doesn't exist, add as new student
+            self.add_students([new_student])
+            return
+        
+        # Recalculate all arrays and matrices after update
+        self.__generate_have_want_arrays()
+        self.__crush_matrix()
+        self.__mutual_crush_score()
 
     def add_team(self, team: Team):
         '''
@@ -371,7 +417,12 @@ class Course:
                     if most_matching_student in self.student_not_in_team:  # if we find a student who is not in team, then add the student to the team
                         team.add_student(most_matching_student)
                         self.student_not_in_team.remove(most_matching_student)
-
+        
+        # Ensure all students have team_id set (in case of any missed assignments)
+        for team in self.teams:
+            for student in team.students:
+                if student.team_id != team.team_id:
+                    student.team_id = team.team_id
 
     def print_result(self):
         for team in self.teams:

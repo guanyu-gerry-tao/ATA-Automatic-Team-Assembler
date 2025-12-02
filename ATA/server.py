@@ -55,20 +55,22 @@ async def student_submit(data: Annotated[str, Form()], request: Request):
         project_summary=student_data["project_summary"],
         other_prompts=student_data["other_prompts"],
     )
-    course.add_students([student])
+    # Update existing student or add new one
+    course.update_student(student)
     pickle_ops.save_data(course)
     return {"status": "ok"}
 
 
-# @app.post("/proceed")
-# def proceed(email: str, passcode: str, max_size, request: Request):
-#     pass  # TODO: after having student's data, use this api to start proceed team matching algorithm
-#     # TODO: make sure it's professor's IP first
-#     # TODO: then proceed, and IO out the result to memory
-#     if request.client.host != prof_ip:
-#         return "Only professor can proceed"
-#     course.team_matching(max_size=max_size)
-#     return {"status": "ok"}
+@app.get("/check_status")
+def check_status(email: str, request: Request):
+    """check if student has team matching result"""
+    course = pickle_ops.load_data()
+    try:
+        student = course.get_student_by_email(email)
+        has_result = student.team_id is not None and student.team_id != ""
+        return {'status': 'ok', 'has_result': bool(has_result)}
+    except ValueError:
+        return {'status': 'error', 'has_result': False, 'message': 'Student not found'}
 
 
 @app.get("/result")
@@ -78,19 +80,17 @@ def result(email: str, request: Request):
     team_id = student.team_id
     team = course.get_team_by_team_id(team_id)
     teammates_name = [teammate.first_name for teammate in team.students]
+    teammates_email = [teammate.email for teammate in team.students]
     teammates_proj_summary = [teammate.project_summary for teammate in team.students]
+    ai_suggestion = getattr(team, 'AI_suggestion', None) or ""
     pickle_ops.save_data(course)
-    return {'status': 'ok', 'teammates_name': teammates_name, 'teammates_proj_summary': teammates_proj_summary}
-
-
-# @app.post("/reset")
-# def reset(email: str, passcode: str, request: Request):
-#     if email == prof_email and passcode == prof_passcode:
-#         global course
-#         course = Course()
-#         return "Data has been reset. If you want to clear professor's email and passcode, please restart the server."
-#     else:
-#         return "Only professor can reset the data"
+    return {
+        'status': 'ok',
+        'teammates_name': teammates_name,
+        'teammates_email': teammates_email,
+        'teammates_proj_summary': teammates_proj_summary,
+        'ai_suggestion': ai_suggestion
+    }
 
 
 @app.get("/health")
