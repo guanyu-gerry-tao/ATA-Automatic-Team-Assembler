@@ -4,3 +4,4 @@ venv/
 .gitignore
 .idea
 ATA/student_data
+.env

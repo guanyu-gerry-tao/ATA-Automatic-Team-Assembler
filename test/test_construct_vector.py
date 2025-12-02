@@ -13,10 +13,10 @@ def student_data_opener(test_file_path: str):
         return json.load(f)
 
 
-def student_data_importer_helper(json_file, first_name):
-    data = json_file[first_name]
+def student_data_importer_helper(json_file, email):
+    data = json_file["students"][email]
     student = Student(
-        student_ip=None,
+        student_ip=data.get("student_ip"),
         first_name=data["first_name"],
         email=data["email"],
         skill_level=data["skill_level"],  # ok
@@ -35,10 +35,10 @@ def student_data_importer_helper(json_file, first_name):
 
 def load_all_test_students_helper(test_file_path: str):
     js = student_data_opener(test_file_path)
-    students_name = list(js.keys())
+    students_emails = list(js["students"].keys())
     students = []
-    for student_name in students_name:
-        student = student_data_importer_helper(js, student_name)
+    for email in students_emails:
+        student = student_data_importer_helper(js, email)
         students.append(student)
     return students
 
@@ -152,9 +152,9 @@ class TestConstructVector(unittest.TestCase):
 class TestMoreStudents(unittest.TestCase):
     def test_more_students(self):
         js = student_data_opener("test/test_user.json")
-        students_name = list(js.keys())
-        for student_name in students_name:
-            student = student_data_importer_helper(js, student_name)
+        students_emails = list(js["students"].keys())
+        for email in students_emails:
+            student = student_data_importer_helper(js, email)
             student.construct_vector()
 
 

@@ -1,98 +1,78 @@
-from typing import Annotated
-
-from fastapi import FastAPI, Request, Form
-from fastapi.responses import HTMLResponse
-from pathlib import Path
-import os
-
-from .models import Student
-
+import ATA.pickle_ops as pickle_ops
+from ATA.models import Course, Student
 import json
+import requests
 
-app = FastAPI()
-
-prof_ip = None
-
-@app.post("/phase")
-def set_phase(set_phase: int):
-    global phase
-    phase = set_phase
-    return {"status": "ok"}
-
-@app.get("/prof_login", response_class=HTMLResponse)
-def prof_login(request: Request):
-    global prof_ip
-    if not prof_ip:
-        prof_ip = request.client.host
-    if request.client.host == prof_ip:
-        dashboard = Path("../FE_dashboard/index.html").read_text(encoding="utf-8")
-        return dashboard
-    else:
-        return "The professor has already logged in."
-
-@app.get("/")
-def read_root():
-    print("someone visited!")
-    return {"Hello": "World"}
+data_filepath = "data/data.json"
 
 
-@app.post("/student_submit")
-async def student_submit(course_code: str, number_of_teaming: int, data: Annotated[str, Form()], request: Request):
-    # TODO: if student relogin, clear the old data
-    student_data = json.loads(data)
-    student = Student(
-        student_ip=request.client.host,
-        first_name=student_data["first_name"],
-        email=student_data["email"],
-        skill_level=student_data["skill_level"],
-        ambition=student_data["ambition"],
-        role=student_data["role"],
-        teamwork_style=student_data["teamwork_style"],
-        pace=student_data["pace"],
-        backgrounds=set(student_data["backgrounds"]),
-        backgrounds_preference=student_data["backgrounds_preference"],
-        hobbies=set(student_data["hobbies"]),
-        project_summary=student_data["project_summary"],
-        other_prompts=student_data["other_prompts"]
-    )
-    try:
-        with open(f"ATA/student_data/{course_code}_{number_of_teaming}.json", "r") as f:
-            data = json.load(f)
-            data[student.first_name] = student.get_json()
-            with open(f"ATA/student_data/{course_code}_{number_of_teaming}.json", "w") as f:
-                json.dump(data, f, indent=4)
-    except FileNotFoundError:
-        with open(f"ATA/student_data/{course_code}_{number_of_teaming}.json", "w") as f:
-            data = {}
-            data[student.first_name] = student.get_json()
-            json.dump(data, f, indent=4)
-
-    return {"status": "ok"}
+def proceed_team_matching(max_size: int) -> None:
+    if not isinstance(max_size, int):
+        print("Invalid input, please enter a valid integer.")
+        return
+    if max_size <= 1:
+        print("Invalid input, please enter a valid integer greater than 1.")
+        return
+    print() # add a new line
+    course = pickle_ops.load_data()
+    course.team_matching(max_size)
+    pickle_ops.save_data(course)
 
 
-@app.post("/proceed")
-def proceed():
-    pass  # TODO: after having student's data, use this api to start proceed team matching algorism
-    # TODO: make sure it's professor's IP first
-    # TODO: then proceed, and IO out the result to memory
+def return_all_students_name() -> list[str]:
+    course = pickle_ops.load_data()
+    students_name = []
+    for student in course.students:
+        students_name.append(student.first_name)
+    return students_name
 
 
-@app.get("/result")
-def result():
-    pass
-    # TODO: student with their IP can get result
+q = """
+Please enter the following command:
+S - current students
+T - team matching
+P - print results
+R - reset system
+test - input test data
+
+INPUT: """
+
+def main():
+    course = Course([])
+    pickle_ops.save_data(course)
+    while True:
+        inp = input(q)
+        if inp.lower() == "s":
+            print()
+            students = return_all_students_name()
+            print("Number of students: ", len(students))
+            print("Student List:\n ", ", ".join(students))
+        elif inp.lower() == "t":
+            print()  # add a new line
+            team_size = int(input("Enter team size: "))
+            proceed_team_matching(team_size)
+            print("Team matching completed.")
+        elif inp.lower() == "p":
+            print()
+            course = pickle_ops.load_data()
+            course.print_result()
+        elif inp.lower() == "r":
+            print()
+            confirm = input("Are you sure you want to reset the system? (y/n): ")
+            if confirm.lower() == "y" or confirm.lower() == "yes":
+                course = Course([])
+                pickle_ops.save_data(course)
+                print("System has been reset.")
+        elif inp.lower() == "test":
+            with open("test/test_user.json", "r") as f:
+                data = json.load(f)
+            for student in data["students"].values():
+                requests.post("http://localhost:8000/student_submit", data={"data": json.dumps(student)})
+            print("Test data uploaded.")
+        else:
+            print("Invalid command, please try again.")
+        print()
 
 
-@app.post("/reset")
-def reset():
-    pass
-    # TODO: professor can reset the system, clear all memory for another start
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str | None = None):
-    return {"item_id": item_id, "q": q}
-
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+if __name__ == "__main__":
+    main()

@@ -4,3 +4,4 @@ venv/
 .dockerignore
 .idea
 ATA/student_data
+.env
