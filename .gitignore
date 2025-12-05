@@ -5,3 +5,4 @@ venv/
 .idea
 ATA/student_data
 .env
+# .env_fe is a template file and should be committed to git

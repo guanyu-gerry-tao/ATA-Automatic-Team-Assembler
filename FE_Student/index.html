@@ -1,9 +1,14 @@
+<!--
+AI-GENERATED CODE
+This file was automatically generated/modified by an AI assistant.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Information Form - ATA</title>
+    <script src="config.js"></script>
     <style>
         * {
             margin: 0;
@@ -422,8 +427,8 @@
     </div>
     
     <script>
-        // Configure backend API URL (modify when deploying)
-        const API_BASE_URL = 'http://localhost:8000';  // Change to actual backend URL in production
+        // Configure backend API URL from config.js
+        const API_BASE_URL = window.API_CONFIG?.BASE_URL || 'http://localhost:8000';
         
         // Periodically check for results (every 1 second)
         let checkInterval = null;

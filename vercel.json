@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd FE_Student && node build.js",
+  "outputDirectory": "FE_Student",
+  "framework": null,
+  "installCommand": "echo 'No install needed for static site'"
+}
