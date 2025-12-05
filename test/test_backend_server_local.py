@@ -1,8 +1,7 @@
-"""
-AI-GENERATED CODE
-This file was automatically generated/modified by an AI assistant.
+"""Test suite for the backend API server.
 
-Simple test suite for the backend API server.
+Tests the FastAPI endpoints including student submission, status checking,
+and data persistence. Requires the API server to be running on localhost:8000.
 """
 
 import time
@@ -26,17 +25,30 @@ class TestBackendAPI(unittest.TestCase):
     """Test backend API endpoints."""
     
     def setUp(self):
-        """Clear data before each test."""
+        """Clear data before each test.
+        
+        Creates an empty Course and saves it to ensure clean state for each test.
+        """
         course = Course([])
         pickle_ops.save_data(course)
     
     def tearDown(self):
-        """Clear data after each test."""
+        """Clear data after each test.
+        
+        Creates an empty Course and saves it to clean up after each test.
+        """
         course = Course([])
         pickle_ops.save_data(course)
     
     def load_student(self, email: str):
-        """Load student data from test_user.json."""
+        """Load student data from test_user.json.
+        
+        Args:
+            email: Email address of the student to load.
+            
+        Returns:
+            Dictionary containing student data from test_user.json.
+        """
         with open("test/test_user.json", "r") as f:
             data = json.load(f)
         return data["students"][email]

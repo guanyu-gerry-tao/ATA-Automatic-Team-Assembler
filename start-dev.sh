@@ -1,4 +1,6 @@
 #!/bin/bash
+# Start the development environment with API and console services
+
 set -e
 
 echo "🚀 Starting development environment..."

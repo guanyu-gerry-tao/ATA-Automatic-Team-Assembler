@@ -1,11 +1,16 @@
+# Use Python 3.13 as base image
 FROM python:3.13
 
+# Set working directory inside container
 WORKDIR /app
 
+# Copy requirements file first for better Docker layer caching
 COPY requirements.txt /app/
 
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy all project files to container
 COPY . /app
 
 # Ensure the entrypoint script is executable and fix potential line-ending issues

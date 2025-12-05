@@ -1,3 +1,6 @@
+# Configuration for team matching algorithm
+# Defines available choices and weights for each attribute category
+# Weights are normalized by sqrt(number of choices) in the vector construction
 CONFIG = {
     "skill_level":
         {"choices": ["noob", "ok", "pro"],

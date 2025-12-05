@@ -1,8 +1,7 @@
-"""
-AI-GENERATED CODE
-This file was automatically generated/modified by an AI assistant.
+"""Test suite for vector construction and team matching.
 
-Test suite for vector construction and team matching.
+Tests the Student.construct_vector() method and Course.team_matching() algorithm
+to ensure vectors are correctly constructed and teams are properly formed.
 """
 
 import unittest
@@ -14,13 +13,28 @@ import math
 
 
 def student_data_opener(test_file_path: str):
-    """Load JSON test data file."""
+    """Load JSON test data file.
+    
+    Args:
+        test_file_path: Path to the JSON test data file.
+        
+    Returns:
+        Parsed JSON data as dictionary.
+    """
     with open(test_file_path, "r") as f:
         return json.load(f)
 
 
 def student_data_importer_helper(json_file, email):
-    """Create a Student object from JSON data."""
+    """Create a Student object from JSON data.
+    
+    Args:
+        json_file: Parsed JSON data dictionary.
+        email: Email address of the student to import.
+        
+    Returns:
+        Student object created from the JSON data.
+    """
     data = json_file["students"][email]
     student = Student(
         first_name=data["first_name"],
@@ -39,7 +53,14 @@ def student_data_importer_helper(json_file, email):
 
 
 def load_all_test_students_helper(test_file_path: str):
-    """Load all students from test JSON file."""
+    """Load all students from test JSON file.
+    
+    Args:
+        test_file_path: Path to the JSON test data file.
+        
+    Returns:
+        List of Student objects created from the JSON data.
+    """
     js = student_data_opener(test_file_path)
     students_emails = list(js["students"].keys())
     students = []

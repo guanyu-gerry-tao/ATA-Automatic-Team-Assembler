@@ -3,25 +3,15 @@ from typing import Annotated
 
 from fastapi import FastAPI, Request, Form
 
-
 from ATA import pickle_ops
-
-# for CORS
 from starlette.middleware.cors import CORSMiddleware
-
-# load models
 from .models import Student, Course
-
-# for load config
 import json
 
-
-# # variable to store professor's IP'
-# prof_email = input("Please enter professor's email: ")
-# prof_passcode = input("Please create professor's passcode: ")
-
+# FastAPI application instance
 app = FastAPI()
 
+# Configure CORS to allow cross-origin requests
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -33,12 +23,29 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
+    """Root endpoint for health check and API identification.
+    
+    Returns:
+        API name string.
+    """
     print("someone visited!")
     return "ATA-Automatic Team Assembler"
 
 
 @app.post("/student_submit")
 async def student_submit(data: Annotated[str, Form()], request: Request):
+    """Submit or update student information.
+    
+    Accepts student data as JSON string in form data. If a student with the same
+    email exists, their information is updated. Otherwise, a new student is added.
+    
+    Args:
+        data: JSON string containing student information.
+        request: FastAPI request object.
+        
+    Returns:
+        Dictionary with status "ok" on success.
+    """
     # Load existing course, or create new one if file doesn't exist
     try:
         course = pickle_ops.load_data()
@@ -70,7 +77,15 @@ async def student_submit(data: Annotated[str, Form()], request: Request):
 
 @app.get("/check_status")
 def check_status(email: str, request: Request):
-    """check if student has team matching result"""
+    """Check if a student has been assigned to a team.
+    
+    Args:
+        email: Student's email address.
+        request: FastAPI request object.
+        
+    Returns:
+        Dictionary with status and has_result boolean indicating if student has a team.
+    """
     try:
         course = pickle_ops.load_data()
         if not isinstance(course, Course):
@@ -88,6 +103,16 @@ def check_status(email: str, request: Request):
 
 @app.get("/result")
 def result(email: str, request: Request):
+    """Get team matching results for a student.
+    
+    Args:
+        email: Student's email address.
+        request: FastAPI request object.
+        
+    Returns:
+        Dictionary containing team information including teammate names, emails,
+        project summaries, and AI suggestions.
+    """
     course = pickle_ops.load_data()
     student = course.get_student_by_email(email)
     team_id = student.team_id
@@ -108,4 +133,9 @@ def result(email: str, request: Request):
 
 @app.get("/health")
 def health():
+    """Health check endpoint for monitoring and load balancers.
+    
+    Returns:
+        Dictionary with status "ok".
+    """
     return {"status": "ok"}

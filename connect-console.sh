@@ -1,4 +1,6 @@
 #!/bin/bash
+# Connect to the console container for interactive CLI access
+
 set -e
 
 # Check if the console container is running
