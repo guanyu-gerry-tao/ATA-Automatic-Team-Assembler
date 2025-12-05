@@ -1,5 +1,6 @@
 import ATA.pickle_ops as pickle_ops
 from ATA.models import Course, Student
+from ATA.config import VERSION
 import json
 
 
@@ -128,7 +129,9 @@ def remove_student_cli():
 
 
 # Command prompt string displayed to users
-q = """_____________________________________
+q = """+------------------------------------------+
+| CONSOLE COMMAND LINE                     |
++------------------------------------------+
 Please enter the following command:
 S - current students
 T - team matching
@@ -141,12 +144,23 @@ test - input test data
 INPUT: """
 
 
+p = """+------------------------------------------+
+| RESULT PRINTING                          |
++------------------------------------------+"""
+
+
 def main():
     """Main entry point for the CLI application.
     
     Provides an interactive command-line interface for managing students and teams.
     Handles loading/saving course data and routing user commands to appropriate functions.
     """
+    # Display version information on startup
+    print(f"+------------------------------------------+")
+    print(f"| " + f"ATA - Automatic Team Assembler v{VERSION}".ljust(40) + " |")
+    print(f"+------------------------------------------+")
+    print()
+    
     # Initialize course data
     # Try to load existing course; if not found, create a new empty course
     try:
@@ -165,12 +179,12 @@ def main():
         
         # Command: S - Display all current students
         if inp.lower() == "s":
-            print()  # blank line for formatting
+            print(p)  # print result printing header
             display_all_students()  # show all students with their info
         
         # Command: T - Run team matching algorithm
         elif inp.lower() == "t":
-            print()  # blank line for formatting
+            print(p)  # print result printing header
             try:
                 team_size = int(input("Enter team size: "))  # prompt for max team size
             except ValueError:
@@ -178,17 +192,18 @@ def main():
                 print("Invalid input, please enter a valid integer.")
                 continue  # skip to next iteration, prompt again
             proceed_team_matching(team_size)  # run matching algorithm
-            print("Team matching completed.")  # confirm completion
+            print("Team matching completed.")
+            print("------------------------")
         
         # Command: P - Print team matching results
         elif inp.lower() == "p":
-            print()  # blank line for formatting
+            print(p)  # print result printing header
             course = pickle_ops.load_data()  # reload course data to get latest results
             course.print_result()  # display formatted team results
         
         # Command: R - Reset system (delete all students)
         elif inp.lower() == "r":
-            print()  # blank line for formatting
+            print(p)  # print result printing header
             # Ask for confirmation before destructive operation
             confirm = input("Are you sure you want to reset the system (delete all students)? (y/n): ")
             if confirm.lower() in ("y", "yes"):  # check if user confirmed
@@ -199,18 +214,21 @@ def main():
         
         # Command: U - Clear all team assignments but keep students
         elif inp.lower() == "u":
-            print()  # blank line for formatting
+            print(p)  # print result printing header
             clear_team_assignments_cli()  # remove team assignments, preserve students
         
         # Command: D - Delete a student by email
         elif inp.lower() == "d":
-            print()  # blank line for formatting
+            print(p)  # print result printing header
             remove_student_cli()  # prompt for email and remove student
         
         # Command: test - Upload test data from JSON file
         elif inp.lower() == "test":
+            print(p)  # print result printing header
             upload_test_data()  # load and add test students from test_user.json
-            print("Test data uploaded.")  # confirm completion
+            print("TEST DATA HAS BEEN UPLOADED")
+            print("---------------------------")
+
         
         # Invalid command - user entered something not recognized
         else:

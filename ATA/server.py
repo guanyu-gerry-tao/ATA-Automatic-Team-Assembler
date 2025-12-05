@@ -6,10 +6,16 @@ from fastapi import FastAPI, Request, Form
 from ATA import pickle_ops
 from starlette.middleware.cors import CORSMiddleware
 from .models import Student, Course
+from .config import VERSION
 import json
 
 # FastAPI application instance
 app = FastAPI()
+
+# Print version on startup
+print("=" * 50)
+print(f"| ATA API Server v{VERSION:<41} |")
+print("=" * 50)
 
 # Configure CORS to allow cross-origin requests
 app.add_middleware(

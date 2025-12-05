@@ -42,3 +42,6 @@ CONFIG = {
         ],
             "weight": 1}
 }
+
+# Application version
+VERSION = "1.00"

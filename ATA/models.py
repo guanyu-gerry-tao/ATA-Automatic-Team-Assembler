@@ -753,10 +753,12 @@ class Course:
         """
         # Print each team and its members with their project summaries
         for team in self.teams:
+            print("----------------------------------------")
             print(f"Team {team.team_id}:")  # print team identifier
             
             # Print each student in the team
             for student in team.students:
-                print(f"  {student.first_name} - {student.email}")  # student name and email
-                print(f"    Project: {student.project_summary}")  # student's project idea
+                print()  # blank line between students
+                print(f"    {student.first_name} - {student.email}")  # student name and email
+                print(f"        Project: {student.project_summary}")  # student's project idea
             print()  # blank line between teams
