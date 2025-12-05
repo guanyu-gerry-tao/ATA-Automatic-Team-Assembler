@@ -28,11 +28,9 @@ if (fs.existsSync(envFile)) {
     }
 }
 
-// Auto-detect Vercel environment and use proxy path
-// If running on Vercel and API URL is HTTP (not HTTPS and not relative path), use /api proxy to avoid mixed content
-if (process.env.VERCEL && apiUrl.startsWith('http://') && !apiUrl.startsWith('/')) {
-    apiUrl = '/api';
-    console.log('🔧 Detected Vercel environment with HTTP API, using /api proxy to avoid mixed content');
+// Remove trailing slash if present
+if (apiUrl.endsWith('/')) {
+    apiUrl = apiUrl.slice(0, -1);
 }
 
 // Generate config.js file content

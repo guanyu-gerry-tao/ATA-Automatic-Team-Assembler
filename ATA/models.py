@@ -417,7 +417,7 @@ class Course:
                     if most_matching_student in self.student_not_in_team:  # if we find a student who is not in team, then add the student to the team
                         team.add_student(most_matching_student)
                         self.student_not_in_team.remove(most_matching_student)
-        
+
         # Ensure all students have team_id set (in case of any missed assignments)
         for team in self.teams:
             for student in team.students:
