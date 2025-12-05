@@ -1,49 +1,108 @@
+"""
+AI-GENERATED CODE
+This file was automatically generated/modified by an AI assistant.
+
+Simple test suite for the backend API server.
+"""
+
 import time
 import unittest
 import requests
 import json
-import os
+from ATA.models import Course
+from ATA import pickle_ops
 
 
 class TestIfServerIsUp(unittest.TestCase):
+    """Test if the server is running."""
+    
     def test_server_is_up(self):
         result = requests.get("http://localhost:8000/health")
         self.assertEqual(result.status_code, 200)
+        self.assertEqual(result.json()["status"], "ok")
 
 
-class TestRecordingSystemLocalIO(unittest.TestCase):
-    def test_student_upload_data(self):
+class TestBackendAPI(unittest.TestCase):
+    """Test backend API endpoints."""
+    
+    def setUp(self):
+        """Clear data before each test."""
+        course = Course([])
+        pickle_ops.save_data(course)
+    
+    def tearDown(self):
+        """Clear data after each test."""
+        course = Course([])
+        pickle_ops.save_data(course)
+    
+    def load_student(self, email: str):
+        """Load student data from test_user.json."""
         with open("test/test_user.json", "r") as f:
             data = json.load(f)
-            student1 = data["students"]["alice@test.com"]
-            student2 = data["students"]["bob@test.com"]
-        result1 = requests.post("http://localhost:8000/student_submit",
-                                data={"data": json.dumps(student1)})
-        self.assertEqual(result1.status_code, 200)
-        print("Alice uploaded")
+        return data["students"][email]
+    
+    def test_submit_student(self):
+        """Test submitting a student."""
+        student = self.load_student("alice@test.com")
+        
+        response = requests.post(
+            "http://localhost:8000/student_submit",
+            data={"data": json.dumps(student)}
+        )
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["status"], "ok")
+        
+        # Verify student was saved
+        course = pickle_ops.load_data()
+        self.assertEqual(len(course.students), 1)
+        self.assertEqual(course.students[0].email, "alice@test.com")
+    
+    def test_update_student_same_email(self):
+        """Test that same email updates instead of adding duplicate."""
+        student = self.load_student("alice@test.com")
+        
+        # Submit first time
+        requests.post(
+            "http://localhost:8000/student_submit",
+            data={"data": json.dumps(student)}
+        )
         time.sleep(0.1)
-        result2 = requests.post("http://localhost:8000/student_submit",
-                                data={"data": json.dumps(student2)})
-        self.assertEqual(result2.status_code, 200)
-        print("Bob uploaded")
+        
+        # Update with same email
+        student["first_name"] = "Alice Updated"
+        student["project_summary"] = "Updated summary"
+        
+        requests.post(
+            "http://localhost:8000/student_submit",
+            data={"data": json.dumps(student)}
+        )
         time.sleep(0.1)
-
-        # if not os.path.exists("ATA/student_data/CS5001_202501.json"):
-        #     self.fail("No data saved")
-        #
-        # with open("ATA/student_data/CS5001_202501.json", "r") as f:
-        #     saved_data = json.load(f)
-        #
-        # saved_alice = saved_data["students"]["alice@test.com"]
-        # saved_bob = saved_data["students"]["bob@test.com"]
-        #
-        # for k, v in student1.items():
-        #     if k not in ["uid", "student_ip"]:
-        #         self.assertEqual(saved_alice[k], v)
-        #
-        # for k, v in student2.items():
-        #     if k not in ["uid", "student_ip"]:
-        #         self.assertEqual(saved_bob[k], v)
+        
+        # Verify updated, not duplicated
+        course = pickle_ops.load_data()
+        self.assertEqual(len(course.students), 1)
+        self.assertEqual(course.students[0].first_name, "Alice Updated")
+    
+    def test_check_status(self):
+        """Test check_status endpoint."""
+        student = self.load_student("alice@test.com")
+        
+        requests.post(
+            "http://localhost:8000/student_submit",
+            data={"data": json.dumps(student)}
+        )
+        time.sleep(0.1)
+        
+        response = requests.get(
+            "http://localhost:8000/check_status",
+            params={"email": "alice@test.com"}
+        )
+        
+        self.assertEqual(response.status_code, 200)
+        result = response.json()
+        self.assertEqual(result["status"], "ok")
+        self.assertFalse(result["has_result"])
 
 
 if __name__ == '__main__':

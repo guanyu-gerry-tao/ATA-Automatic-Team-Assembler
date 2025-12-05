@@ -415,12 +415,6 @@ This file was automatically generated/modified by an AI assistant.
                 <textarea id="project_summary" name="project_summary" required placeholder="Please describe your project ideas or expectations for the team..."></textarea>
             </div>
             
-            <!-- Other Prompts -->
-            <div class="form-group">
-                <label for="other_prompts" class="question-label" data-question-number="12">💬 Additional Notes</label>
-                <textarea id="other_prompts" name="other_prompts" placeholder="Any other information you'd like to share..."></textarea>
-            </div>
-            
             <button type="submit" class="submit-btn" id="submitBtn">🚀 Submit Information</button>
             <div id="message"></div>
         </form>
@@ -429,6 +423,9 @@ This file was automatically generated/modified by an AI assistant.
     <script>
         // Configure backend API URL from config.js
         const API_BASE_URL = window.API_CONFIG?.BASE_URL || 'http://localhost:8000';
+        
+        // Variable to track if we're waiting for results
+        let isWaitingForResult = localStorage.getItem('isWaitingForResult') === 'true';
         
         // Periodically check for results (every 1 second)
         let checkInterval = null;
@@ -439,6 +436,12 @@ This file was automatically generated/modified by an AI assistant.
             }
             
             checkInterval = setInterval(async () => {
+                // Only check if we're still waiting for result
+                if (!isWaitingForResult) {
+                    clearInterval(checkInterval);
+                    return;
+                }
+                
                 try {
                     const response = await fetch(`${API_BASE_URL}/check_status?email=${encodeURIComponent(email)}`);
                     
@@ -453,6 +456,8 @@ This file was automatically generated/modified by an AI assistant.
                     // Check if has_result is true (could be boolean or truthy value)
                     if (data.has_result === true || data.has_result === 'true') {
                         clearInterval(checkInterval);
+                        isWaitingForResult = false;
+                        localStorage.removeItem('isWaitingForResult');
                         console.log('Results found! Redirecting...'); // Debug log
                         window.location.href = 'result.html';
                     }
@@ -466,8 +471,9 @@ This file was automatically generated/modified by an AI assistant.
         window.addEventListener('DOMContentLoaded', async () => {
             const savedEmail = localStorage.getItem('studentEmail');
             
-            if (savedEmail) {
-                // If saved email exists, check if there are results
+            // Only auto-check and redirect if we're waiting for results
+            if (savedEmail && isWaitingForResult) {
+                // If waiting for result, check if there are results
                 try {
                     const response = await fetch(`${API_BASE_URL}/check_status?email=${encodeURIComponent(savedEmail)}`);
                     
@@ -480,11 +486,13 @@ This file was automatically generated/modified by an AI assistant.
                         // Check if has_result is true
                         if (data.has_result === true || data.has_result === 'true') {
                             // Has results, redirect to results page
+                            isWaitingForResult = false;
+                            localStorage.removeItem('isWaitingForResult');
                             console.log('Results found on page load! Redirecting...'); // Debug log
                             window.location.href = 'result.html';
                             return;
                         } else {
-                            // No results yet, but email exists - start polling
+                            // No results yet, continue polling
                             checkResultPeriodically(savedEmail);
                         }
                     }
@@ -493,12 +501,19 @@ This file was automatically generated/modified by an AI assistant.
                 }
             }
             
-            // Show form (can be updated if email exists)
+            // Show form
             document.getElementById('loadingCheck').style.display = 'none';
             document.getElementById('studentForm').style.display = 'block';
             
-            // If saved email exists, pre-fill the email field
-            if (savedEmail) {
+            // If not waiting for result, clear everything
+            if (!isWaitingForResult) {
+                // Clear all form fields
+                document.getElementById('studentForm').reset();
+                // Clear localStorage
+                localStorage.removeItem('studentEmail');
+                localStorage.removeItem('isWaitingForResult');
+            } else if (savedEmail) {
+                // If waiting, pre-fill email for reference only
                 document.getElementById('email').value = savedEmail;
             }
         });
@@ -534,8 +549,7 @@ This file was automatically generated/modified by an AI assistant.
                 backgrounds: Array.from(document.querySelectorAll('input[name="backgrounds"]:checked')).map(cb => parseInt(cb.value)),
                 backgrounds_preference: parseInt(document.querySelector('input[name="backgrounds_preference"]:checked').value),
                 hobbies: Array.from(document.querySelectorAll('input[name="hobbies"]:checked')).map(cb => parseInt(cb.value)),
-                project_summary: document.getElementById('project_summary').value,
-                other_prompts: document.getElementById('other_prompts').value || ''
+                project_summary: document.getElementById('project_summary').value
             };
             
             try {
@@ -551,6 +565,10 @@ This file was automatically generated/modified by an AI assistant.
                 const result = await response.json();
                 
                 if (result.status === 'ok') {
+                    // Set waiting for result flag
+                    isWaitingForResult = true;
+                    localStorage.setItem('isWaitingForResult', 'true');
+                    
                     // Save email to localStorage
                     localStorage.setItem('studentEmail', formData.email);
                     
@@ -570,6 +588,8 @@ This file was automatically generated/modified by an AI assistant.
                             
                             // Check if has_result is true
                             if (statusData.has_result === true || statusData.has_result === 'true') {
+                                isWaitingForResult = false;
+                                localStorage.removeItem('isWaitingForResult');
                                 console.log('Results found immediately! Redirecting...'); // Debug log
                                 window.location.href = 'result.html';
                                 return;

@@ -172,7 +172,10 @@ This file was automatically generated/modified by an AI assistant.
             background: #6c757d;
             color: white;
             text-decoration: none;
+            border: none;
             border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
             transition: background 0.2s;
         }
         
@@ -202,7 +205,7 @@ This file was automatically generated/modified by an AI assistant.
         <div id="content" style="display: none;">
             <div id="teamInfo"></div>
             <button class="refresh-btn" onclick="loadResult()">Refresh Results</button>
-            <a href="index.html" class="back-btn">Back to Form</a>
+            <button class="back-btn" onclick="confirmReset()">Resubmit</button>
         </div>
         
         <div id="error" style="display: none;"></div>
@@ -211,6 +214,30 @@ This file was automatically generated/modified by an AI assistant.
     <script>
         // Configure backend API URL from config.js
         const API_BASE_URL = window.API_CONFIG?.BASE_URL || 'http://localhost:8000';
+        
+        // Clear waiting state when going back to form
+        function clearWaitingState() {
+            localStorage.removeItem('isWaitingForResult');
+            localStorage.removeItem('studentEmail');
+            window.location.href = 'index.html';
+        }
+        
+        // Confirm before resetting form
+        function confirmReset() {
+            const confirmed = confirm(
+                '⚠️ Warning: You are about to resubmit your information\n\n' +
+                'Please note:\n' +
+                '• Your currently submitted information will be recorded\n' +
+                '• You cannot delete your submitted information\n' +
+                '• Deletion can only be performed by the instructor\n' +
+                '• After resubmitting, you can submit new information, which will overwrite the old information\n\n' +
+                'Do you want to continue?'
+            );
+            
+            if (confirmed) {
+                clearWaitingState();
+            }
+        }
         
         // Load results
         async function loadResult() {
@@ -233,7 +260,7 @@ This file was automatically generated/modified by an AI assistant.
                 error.innerHTML = `
                     <div class="error-message">
                         <p>❌ Email not found. Please fill out the form first.</p>
-                        <a href="index.html" class="back-btn" style="display: inline-block; margin-top: 10px;">Go to Form</a>
+                        <button class="back-btn" style="display: inline-block; margin-top: 10px;" onclick="confirmReset()">Resubmit</button>
                     </div>
                 `;
                 return;

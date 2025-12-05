@@ -1,7 +1,12 @@
+"""
+AI-GENERATED CODE
+This file was automatically generated/modified by an AI assistant.
+
+Test suite for vector construction and team matching.
+"""
+
 import unittest
-
 import numpy as np
-
 from ATA.models import Student, Course
 from ATA.config import CONFIG
 import json
@@ -9,31 +14,32 @@ import math
 
 
 def student_data_opener(test_file_path: str):
+    """Load JSON test data file."""
     with open(test_file_path, "r") as f:
         return json.load(f)
 
 
 def student_data_importer_helper(json_file, email):
+    """Create a Student object from JSON data."""
     data = json_file["students"][email]
     student = Student(
-        student_ip=data.get("student_ip"),
         first_name=data["first_name"],
         email=data["email"],
-        skill_level=data["skill_level"],  # ok
-        ambition=data["ambition"],  # ambitious
-        role=data["role"],  # follower
-        teamwork_style=data["teamwork_style"],  # offline_meeting
-        pace=data["pace"],  # finish_late
-        backgrounds=set(data["backgrounds"]),  # Finance
-        backgrounds_preference=data["backgrounds_preference"],  # different
-        hobbies=set(data["hobbies"]),  # Outdoor Sports & Fitness/
-        project_summary=data["project_summary"],
-        other_prompts=data["other_prompts"]
+        skill_level=data["skill_level"],
+        ambition=data["ambition"],
+        role=data["role"],
+        teamwork_style=data["teamwork_style"],
+        pace=data["pace"],
+        backgrounds=set(data["backgrounds"]),
+        backgrounds_preference=data["backgrounds_preference"],
+        hobbies=set(data["hobbies"]),
+        project_summary=data["project_summary"]
     )
     return student
 
 
 def load_all_test_students_helper(test_file_path: str):
+    """Load all students from test JSON file."""
     js = student_data_opener(test_file_path)
     students_emails = list(js["students"].keys())
     students = []
@@ -44,10 +50,12 @@ def load_all_test_students_helper(test_file_path: str):
 
 
 class TestConstructVector(unittest.TestCase):
+    """Test vector construction for Student objects."""
+    
     def test_normal_case(self):
+        """Test vector construction with normal values."""
         try:
             student = Student(
-                student_ip=None,
                 first_name="test",
                 email="test",
                 skill_level=1,  # ok
@@ -57,14 +65,14 @@ class TestConstructVector(unittest.TestCase):
                 pace=1,  # finish_late
                 backgrounds={1},  # Finance
                 backgrounds_preference=1,  # different
-                hobbies={1, 2, 3},  # Outdoor Sports & Fitness/
-                project_summary="test",
-                other_prompts="test"
+                hobbies={1, 2, 3},
+                project_summary="test"
             )
             vector_have, vector_want = student.construct_vector()
-        except:
-            self.fail("construct_vector() raised Exception unexpectedly!")
-        # normalized weights must match Student.construct_vector
+        except Exception as e:
+            self.fail(f"construct_vector() raised Exception unexpectedly! {e}")
+        
+        # Normalized weights must match Student.construct_vector
         w_skill = CONFIG["skill_level"]["weight"] / math.sqrt(len(CONFIG["skill_level"]["choices"]))
         w_amb = CONFIG["ambition"]["weight"] / math.sqrt(len(CONFIG["ambition"]["choices"]))
         w_role = CONFIG["role"]["weight"] / math.sqrt(len(CONFIG["role"]["choices"]))
@@ -97,25 +105,24 @@ class TestConstructVector(unittest.TestCase):
         np.testing.assert_allclose(vector_want, exp_vector_want, rtol=1e-6, atol=1e-6)
 
     def test_no_pref_case(self):
+        """Test vector construction with no preference (None values)."""
         try:
             student = Student(
-                student_ip=None,
                 first_name="test",
                 email="test",
                 skill_level=0,  # noob
                 ambition=None,  # no_pref
-                role=None,  # follower
-                teamwork_style=None,  # offline_meeting
-                pace=None,  # finish_late
-                backgrounds=None,  # Finance
-                backgrounds_preference=None,  # different
-                hobbies=None,  # Outdoor Sports & Fitness/
-                project_summary="test",
-                other_prompts="test"
+                role=None,  # no_pref
+                teamwork_style=None,  # no_pref
+                pace=None,  # no_pref
+                backgrounds=set(),  # empty set
+                backgrounds_preference=None,  # no_pref
+                hobbies=set(),  # empty set
+                project_summary="test"
             )
             vector_have, vector_want = student.construct_vector()
-        except:
-            self.fail("construct_vector() raised Exception unexpectedly!")
+        except Exception as e:
+            self.fail(f"construct_vector() raised Exception unexpectedly! {e}")
 
         w_skill = CONFIG["skill_level"]["weight"] / math.sqrt(len(CONFIG["skill_level"]["choices"]))
         w_amb = CONFIG["ambition"]["weight"] / math.sqrt(len(CONFIG["ambition"]["choices"]))
@@ -150,27 +157,38 @@ class TestConstructVector(unittest.TestCase):
 
 
 class TestMoreStudents(unittest.TestCase):
+    """Test vector construction for all students in test data."""
+    
     def test_more_students(self):
+        """Test that all students from test_user.json can construct vectors."""
         js = student_data_opener("test/test_user.json")
         students_emails = list(js["students"].keys())
         for email in students_emails:
             student = student_data_importer_helper(js, email)
-            student.construct_vector()
+            try:
+                student.construct_vector()
+            except Exception as e:
+                self.fail(f"Failed to construct vector for {email}: {e}")
 
 
 class TestTeamMatching(unittest.TestCase):
+    """Test team matching functionality."""
+    
     def test_team_matching(self):
+        """Test team matching with test students."""
         students = load_all_test_students_helper("test/test_user.json")
-        test_num_of_group = 8
-        course = Course(semester=1, course_code="CS5001", num_of_group=test_num_of_group)
-        course.add_students(students)
-        course.team_matching()
+        course = Course(students)
+        max_team_size = 3
+        course.team_matching(max_size=max_team_size)
 
         teams = course.teams
+        self.assertGreater(len(teams), 0, "Should have at least one team")
+        
+        # Print teams for debugging
         for index, team in enumerate(teams):
             print(f"-- team {index}:")
             for student in team.students:
-                print(student.first_name)
+                print(f"  {student.first_name} ({student.email})")
 
 
 if __name__ == '__main__':

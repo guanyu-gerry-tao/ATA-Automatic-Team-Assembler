@@ -16,7 +16,6 @@ class Student:
                  backgrounds_preference: int,
                  hobbies: set[int],
                  project_summary: str,
-                 other_prompts: str,
                  team_id: str = None,
                  ):
         self.team_id = team_id
@@ -31,7 +30,6 @@ class Student:
         self.backgrounds_preference = backgrounds_preference
         self.hobbies = hobbies
         self.project_summary = project_summary
-        self.other_prompts = other_prompts
         self.vector_have, self.vector_want = self.construct_vector()
 
 
@@ -48,8 +46,7 @@ class Student:
             "backgrounds": list(self.backgrounds),
             "backgrounds_preference": self.backgrounds_preference,
             "hobbies": list(self.hobbies),
-            "project_summary": self.project_summary,
-            "other_prompts": self.other_prompts
+            "project_summary": self.project_summary
         }
 
 
@@ -233,12 +230,14 @@ class Team:
 
 class Course:
     def __init__(self, students: list[Student]):
-        self.students = self.add_students(students) if students else []
+        self.students = []
         self.teams = []
         self.array_of_have, self.array_of_want = np.array([]), np.array([])
         self.score_matrix = np.array([])
         self.mutual_crush_score_list = []
         self.student_not_in_team = []
+        if students:
+            self.add_students(students)
 
     def get_student_by_email(self, email: str) -> Student:
         for student in self.students:
@@ -271,38 +270,59 @@ class Course:
     def update_student(self, new_student: Student):
         '''
         Update an existing student's information by email. If student doesn't exist, add them.
+        This function will remove all duplicate students with the same email and keep only the updated one.
         :param new_student: Student instance with updated information
         :return:
         '''
-        try:
-            existing_student = self.get_student_by_email(new_student.email)
-            # Preserve team_id if student is already in a team
-            new_student.team_id = existing_student.team_id
-            
-            # Update the student in the students list
-            student_index = self.students.index(existing_student)
-            self.students[student_index] = new_student
-            
-            # Update in student_not_in_team list if applicable
-            if existing_student in self.student_not_in_team:
-                not_in_team_index = self.student_not_in_team.index(existing_student)
-                if new_student.team_id is None:
-                    self.student_not_in_team[not_in_team_index] = new_student
-                else:
-                    # If student has a team_id, remove from not_in_team list
-                    self.student_not_in_team.remove(existing_student)
-            
-            # If student is in a team, update the team's student reference
-            if existing_student.team_id is not None:
-                team = self.get_team_by_team_id(existing_student.team_id)
-                team_index = team.students.index(existing_student)
-                team.students[team_index] = new_student
-                team.__generate_have_want()  # Recalculate team vectors
-            
-        except ValueError:
+        # Find all students with this email (handle duplicates)
+        existing_students = [s for s in self.students if s.email == new_student.email]
+        
+        if not existing_students:
             # Student doesn't exist, add as new student
             self.add_students([new_student])
             return
+        
+        # If student exists, preserve team_id from the first existing student
+        # (assuming duplicates should have the same team_id)
+        first_existing = existing_students[0]
+        new_student.team_id = first_existing.team_id
+        
+        # Remove all existing students with this email (including duplicates)
+        for existing_student in existing_students:
+            # Remove from teams if in a team
+            if existing_student.team_id is not None:
+                try:
+                    team = self.get_team_by_team_id(existing_student.team_id)
+                    if existing_student in team.students:
+                        team.students.remove(existing_student)
+                        # Drop empty teams
+                        if not team.students and team in self.teams:
+                            self.teams.remove(team)
+                except ValueError:
+                    pass
+            
+            # Remove from main students list and not-in-team list
+            if existing_student in self.students:
+                self.students.remove(existing_student)
+            if existing_student in self.student_not_in_team:
+                self.student_not_in_team.remove(existing_student)
+        
+        # Add the updated student
+        self.students.append(new_student)
+        
+        # Add to not_in_team list if not in a team
+        if new_student.team_id is None:
+            self.student_not_in_team.append(new_student)
+        else:
+            # If student is in a team, add to that team
+            try:
+                team = self.get_team_by_team_id(new_student.team_id)
+                team.students.append(new_student)
+                team.__generate_have_want()  # Recalculate team vectors
+            except ValueError:
+                # Team not found, clear team_id and add to not_in_team
+                new_student.team_id = None
+                self.student_not_in_team.append(new_student)
         
         # Recalculate all arrays and matrices after update
         self.__generate_have_want_arrays()
@@ -326,6 +346,73 @@ class Course:
         '''
         team.add_student(student)
         self.student_not_in_team.remove(student)  # remove student from student_not_in_team list
+
+    def clear_team_assignments(self):
+        """
+        Clear all team assignments but keep all students.
+        After this call, there will be no teams and all students will be considered 'not in team'.
+        """
+        # Clear team_id for every student
+        for student in self.students:
+            student.team_id = None
+
+        # Reset teams and not-in-team pool
+        self.teams = []
+        self.student_not_in_team = list(self.students)
+
+        # Recompute arrays and score matrix
+        if self.students:
+            self.__generate_have_want_arrays()
+            self.__crush_matrix()
+            self.__mutual_crush_score()
+        else:
+            self.array_of_have = np.array([])
+            self.array_of_want = np.array([])
+            self.score_matrix = np.array([])
+            self.mutual_crush_score_list = []
+
+    def remove_student_by_email(self, email: str):
+        """
+        Completely remove all students (by email) from the course.
+        This removes all students with matching email from students, teams and student_not_in_team.
+        """
+        # Find all students with this email (in case of duplicates)
+        students_to_remove = [s for s in self.students if s.email == email]
+        
+        if not students_to_remove:
+            raise ValueError("Student not found")
+        
+        # Remove each matching student
+        for student in students_to_remove:
+            # If the student is in a team, remove from that team
+            if student.team_id is not None:
+                try:
+                    team = self.get_team_by_team_id(student.team_id)
+                    if student in team.students:
+                        team.students.remove(student)
+                        # Drop empty teams
+                        if not team.students and team in self.teams:
+                            self.teams.remove(team)
+                except ValueError:
+                    # Team not found – ignore, we'll still remove the student from course lists
+                    pass
+
+            # Remove from main students list and not-in-team list
+            if student in self.students:
+                self.students.remove(student)
+            if student in self.student_not_in_team:
+                self.student_not_in_team.remove(student)
+
+        # Recompute arrays and score matrix
+        if self.students:
+            self.__generate_have_want_arrays()
+            self.__crush_matrix()
+            self.__mutual_crush_score()
+        else:
+            self.array_of_have = np.array([])
+            self.array_of_want = np.array([])
+            self.score_matrix = np.array([])
+            self.mutual_crush_score_list = []
 
     def __generate_have_want_arrays(self):
         array_have = []
@@ -376,6 +463,20 @@ class Course:
         '''
         if len(self.students) == 0:
             raise ValueError("No students to match")
+
+        # Always recompute from scratch:
+        # 1) clear existing team assignments
+        # 2) treat all students as not-in-team
+        for student in self.students:
+            student.team_id = None
+        self.teams = []
+        self.student_not_in_team = list(self.students)
+
+        # Recompute arrays and mutual crush scores for the full student set
+        self.__generate_have_want_arrays()
+        self.__crush_matrix()
+        self.__mutual_crush_score()
+
         num_of_group = math.ceil(len(self.students) / max_size)
         if num_of_group > len(self.students):  # handle the case when number of group is larger than number of students
             raise ValueError("Number of group is larger than number of students")
@@ -429,4 +530,5 @@ class Course:
             print(f"Team {team.team_id}:")
             for student in team.students:
                 print(f"  {student.first_name} - {student.email}")
+                print(f"    Project: {student.project_summary}")
             print()

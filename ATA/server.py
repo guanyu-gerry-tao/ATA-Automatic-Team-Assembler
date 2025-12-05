@@ -10,7 +10,7 @@ from ATA import pickle_ops
 from starlette.middleware.cors import CORSMiddleware
 
 # load models
-from .models import Student
+from .models import Student, Course
 
 # for load config
 import json
@@ -39,7 +39,15 @@ def read_root():
 
 @app.post("/student_submit")
 async def student_submit(data: Annotated[str, Form()], request: Request):
-    course = pickle_ops.load_data()
+    # Load existing course, or create new one if file doesn't exist
+    try:
+        course = pickle_ops.load_data()
+        if not isinstance(course, Course):
+            raise Exception("Loaded data is not a Course instance")
+    except Exception:
+        course = Course([])
+        pickle_ops.save_data(course)
+    
     student_data = json.loads(data)
     student = Student(
         first_name=student_data["first_name"],
@@ -53,7 +61,6 @@ async def student_submit(data: Annotated[str, Form()], request: Request):
         backgrounds_preference=student_data["backgrounds_preference"],
         hobbies=set(student_data["hobbies"]),
         project_summary=student_data["project_summary"],
-        other_prompts=student_data["other_prompts"],
     )
     # Update existing student or add new one
     course.update_student(student)
@@ -64,7 +71,13 @@ async def student_submit(data: Annotated[str, Form()], request: Request):
 @app.get("/check_status")
 def check_status(email: str, request: Request):
     """check if student has team matching result"""
-    course = pickle_ops.load_data()
+    try:
+        course = pickle_ops.load_data()
+        if not isinstance(course, Course):
+            raise Exception("Loaded data is not a Course instance")
+    except Exception:
+        return {'status': 'error', 'has_result': False, 'message': 'Student not found'}
+    
     try:
         student = course.get_student_by_email(email)
         has_result = student.team_id is not None and student.team_id != ""

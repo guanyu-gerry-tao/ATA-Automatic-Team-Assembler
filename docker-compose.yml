@@ -12,8 +12,7 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ./data:/app/data
-      - ./ATA/student_data:/app/ATA/student_data
+      - .:/app
 
   console:
     build:
@@ -28,9 +27,7 @@ services:
     depends_on:
       - api
     volumes:
-      - ./ATA:/app/ATA
-      - ./data:/app/data
-      - ./ATA/student_data:/app/ATA/student_data
+      - .:/app
 
   # db:
   #   image: postgres:latest

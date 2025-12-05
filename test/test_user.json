@@ -14,8 +14,7 @@
       "backgrounds": [0],
       "backgrounds_preference": 0,
       "hobbies": [0, 1],
-      "project_summary": "Wants a steady team and learns by doing.",
-      "other_prompts": ""
+      "project_summary": "Wants to build a simple Python web scraper to collect data from websites. Interested in learning basic web scraping and data collection techniques."
     },
     "bob@test.com": {
       "first_name": "Bob",
@@ -28,8 +27,7 @@
       "backgrounds": [1],
       "backgrounds_preference": 1,
       "hobbies": [1, 2],
-      "project_summary": "Prefers diverse teammates, flexible on pace.",
-      "other_prompts": ""
+      "project_summary": "Interested in creating a data analysis tool using Python pandas and matplotlib. Wants to work with financial or business datasets."
     },
     "carol@test.com": {
       "first_name": "Carol",
@@ -42,8 +40,7 @@
       "backgrounds": [2],
       "backgrounds_preference": 0,
       "hobbies": [2, 3],
-      "project_summary": "Ambitious, likes offline meetings.",
-      "other_prompts": ""
+      "project_summary": "Aspiring to build a machine learning model for image classification. Wants to work with TensorFlow or PyTorch and create something meaningful."
     },
     "david@test.com": {
       "first_name": "David",
@@ -56,8 +53,7 @@
       "backgrounds": [3, 6],
       "backgrounds_preference": 1,
       "hobbies": [0, 6],
-      "project_summary": "Divide-and-conquer style, wants different backgrounds.",
-      "other_prompts": ""
+      "project_summary": "Wants to develop a task management application using Flask or Django. Interested in full-stack web development with Python backend."
     },
     "eve@test.com": {
       "first_name": "Eve",
@@ -70,8 +66,7 @@
       "backgrounds": [],
       "backgrounds_preference": null,
       "hobbies": [],
-      "project_summary": "No strong preferences, very flexible.",
-      "other_prompts": ""
+      "project_summary": "Open to any Python project idea. Would like to work on something practical and useful, perhaps a simple automation script or a data processing tool."
     },
     "frank@test.com": {
       "first_name": "Frank",
@@ -84,8 +79,7 @@
       "backgrounds": [4],
       "backgrounds_preference": 0,
       "hobbies": [4, 5],
-      "project_summary": "Likes fast execution and clear leadership.",
-      "other_prompts": ""
+      "project_summary": "Interested in building a REST API using FastAPI or Flask. Wants to create a backend service that can handle data requests efficiently."
     },
     "grace@test.com": {
       "first_name": "Grace",
@@ -98,8 +92,7 @@
       "backgrounds": [5],
       "backgrounds_preference": 1,
       "hobbies": [5, 6],
-      "project_summary": "Wants diverse teammates, enjoys music and food.",
-      "other_prompts": ""
+      "project_summary": "Wants to create a Python application for music recommendation or playlist management. Interested in working with music APIs and data analysis."
     },
     "henry@test.com": {
       "first_name": "Henry",
@@ -112,8 +105,7 @@
       "backgrounds": [6, 7],
       "backgrounds_preference": 0,
       "hobbies": [0, 2],
-      "project_summary": "Prefers similar backgrounds, online syncs.",
-      "other_prompts": ""
+      "project_summary": "Interested in building a Python automation script for file management or system administration. Wants to learn practical scripting skills."
     },
     "ivy@test.com": {
       "first_name": "Ivy",
@@ -126,8 +118,7 @@
       "backgrounds": [8],
       "backgrounds_preference": 1,
       "hobbies": [2, 6],
-      "project_summary": "Wants different backgrounds, chill on other prefs.",
-      "other_prompts": ""
+      "project_summary": "Wants to work on a Python project involving natural language processing. Interested in text analysis, sentiment analysis, or chatbot development."
     },
     "jack@test.com": {
       "first_name": "Jack",
@@ -140,8 +131,7 @@
       "backgrounds": [1, 2],
       "backgrounds_preference": 0,
       "hobbies": [1, 4],
-      "project_summary": "Likes ambitious teammates and steady progress.",
-      "other_prompts": ""
+      "project_summary": "Interested in creating a Python game using Pygame. Wants to build something interactive and fun, like a simple 2D game or puzzle solver."
     },
     "kate@test.com": {
       "first_name": "Kate",
@@ -154,8 +144,7 @@
       "backgrounds": [3],
       "backgrounds_preference": 1,
       "hobbies": [3, 5],
-      "project_summary": "Wants diverse backgrounds, style flexible.",
-      "other_prompts": ""
+      "project_summary": "Wants to build a Python data visualization dashboard using libraries like Plotly or Dash. Interested in creating interactive charts and graphs."
     },
     "leo@test.com": {
       "first_name": "Leo",
@@ -168,8 +157,7 @@
       "backgrounds": [0, 4, 6],
       "backgrounds_preference": 1,
       "hobbies": [0, 2, 5],
-      "project_summary": "High skill, wants diverse team & fast start.",
-      "other_prompts": ""
+      "project_summary": "Interested in developing a Python application for stock market analysis or cryptocurrency tracking. Wants to work with real-time data and APIs."
     },
     "mia@test.com": {
       "first_name": "Mia",
@@ -182,8 +170,7 @@
       "backgrounds": [7],
       "backgrounds_preference": 0,
       "hobbies": [1, 2, 3],
-      "project_summary": "Enjoys travel and outdoor sports, likes offline meetings.",
-      "other_prompts": ""
+      "project_summary": "Wants to create a Python application for travel planning or itinerary management. Interested in working with maps, location data, and user interfaces."
     },
     "noah@test.com": {
       "first_name": "Noah",
@@ -196,8 +183,7 @@
       "backgrounds": [5, 8],
       "backgrounds_preference": 1,
       "hobbies": [0],
-      "project_summary": "Driven follower, wants very diverse teammates.",
-      "other_prompts": ""
+      "project_summary": "Interested in building a Python chatbot or conversational AI using NLP libraries. Wants to create an interactive assistant application."
     },
     "olivia@test.com": {
       "first_name": "Olivia",
@@ -210,8 +196,7 @@
       "backgrounds": [2, 3, 4],
       "backgrounds_preference": 1,
       "hobbies": [4, 6],
-      "project_summary": "Fast-paced, prefers divide-and-conquer.",
-      "other_prompts": ""
+      "project_summary": "Wants to develop a Python application for image processing or computer vision. Interested in working with OpenCV or PIL for image manipulation."
     },
     "peter@test.com": {
       "first_name": "Peter",
@@ -224,8 +209,7 @@
       "backgrounds": [1, 7],
       "backgrounds_preference": 0,
       "hobbies": [],
-      "project_summary": "Flexible goals, likes early finish.",
-      "other_prompts": ""
+      "project_summary": "Interested in creating a simple Python CLI tool for productivity. Wants to build something like a todo list manager or note-taking application."
     },
     "quinn@test.com": {
       "first_name": "Quinn",
@@ -238,8 +222,7 @@
       "backgrounds": [],
       "backgrounds_preference": null,
       "hobbies": [2, 5],
-      "project_summary": "No background prefs, hobby-aligned team ok.",
-      "other_prompts": ""
+      "project_summary": "Wants to work on a Python project involving data science or analytics. Interested in exploring datasets and finding interesting patterns or insights."
     },
     "ryan@test.com": {
       "first_name": "Ryan",
@@ -252,8 +235,7 @@
       "backgrounds": [0, 6, 8],
       "backgrounds_preference": 0,
       "hobbies": [1, 3, 6],
-      "project_summary": "Ambitious leader, likes online meeting cadence.",
-      "other_prompts": ""
+      "project_summary": "Interested in building a Python web application with real-time features. Wants to create something like a chat app or collaborative tool using WebSockets."
     }
   },
   "teams": {}
