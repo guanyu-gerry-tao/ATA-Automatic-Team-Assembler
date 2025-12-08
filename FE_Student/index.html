@@ -196,12 +196,26 @@ This file was automatically generated/modified by an AI assistant.
             color: #666;
             padding: 20px;
         }
+        
+        .instruction-box {
+            background: transparent;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .instruction-text {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 12px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🎓 Student Information Form</h1>
-        <p class="subtitle">Please fill in the following information to help us match you with suitable team members</p>
+        <p class="subtitle">Fill out this form to help our system automatically match you with suitable team members based on your preferences and background.</p>
         
         <div id="loadingCheck" class="loading">Checking status...</div>
         
@@ -209,29 +223,35 @@ This file was automatically generated/modified by an AI assistant.
             <!-- Basic Information -->
             <div class="form-group">
                 <label for="first_name" class="question-label" data-question-number="1">👤 Name *</label>
-                <input type="text" id="first_name" name="first_name" required>
+                <div class="instruction-box">
+                    <div class="instruction-text">Last + First name</div>
+                    <input type="text" id="first_name" name="first_name" placeholder="John Smith" required style="width: 100%; margin-top: 8px;">
+                </div>
             </div>
             
             <div class="form-group">
                 <label for="email" class="question-label" data-question-number="2">📧 Email *</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" placeholder="john.smith@northeastern.edu" required>
             </div>
             
             <!-- Skill Level -->
             <div class="form-group">
                 <label class="question-label" data-question-number="3">🎯 Skill Level *</label>
-                <div class="radio-group">
-                    <div class="radio-item">
-                        <input type="radio" id="skill_0" name="skill_level" value="0" required>
-                        <label for="skill_0">🌱 Beginner (noob)</label>
-                    </div>
-                    <div class="radio-item">
-                        <input type="radio" id="skill_1" name="skill_level" value="1">
-                        <label for="skill_1">⭐ Intermediate (ok)</label>
-                    </div>
-                    <div class="radio-item">
-                        <input type="radio" id="skill_2" name="skill_level" value="2">
-                        <label for="skill_2">🚀 Professional (pro)</label>
+                <div class="instruction-box">
+                    <div class="instruction-text">Your programming and technical skill level</div>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="skill_0" name="skill_level" value="0" required>
+                            <label for="skill_0">🌱 Beginner</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="skill_1" name="skill_level" value="1">
+                            <label for="skill_1">⭐ Intermediate</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="skill_2" name="skill_level" value="2">
+                            <label for="skill_2">🚀 Professional</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -239,14 +259,17 @@ This file was automatically generated/modified by an AI assistant.
             <!-- Ambition -->
             <div class="form-group">
                 <label class="question-label" data-question-number="4">🎯 Learning Goal *</label>
-                <div class="radio-group">
-                    <div class="radio-item">
-                        <input type="radio" id="ambition_0" name="ambition" value="0" required>
-                        <label for="ambition_0">✅ Just Pass (just_pass)</label>
-                    </div>
-                    <div class="radio-item">
-                        <input type="radio" id="ambition_1" name="ambition" value="1">
-                        <label for="ambition_1">🌟 Pursue Excellence (ambitious)</label>
+                <div class="instruction-box">
+                    <div class="instruction-text">Your learning objective for this course</div>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="ambition_0" name="ambition" value="0" required>
+                            <label for="ambition_0">✅ Just Pass</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="ambition_1" name="ambition" value="1">
+                            <label for="ambition_1">🌟 Pursue Excellence</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -254,18 +277,21 @@ This file was automatically generated/modified by an AI assistant.
             <!-- Role Preference -->
             <div class="form-group">
                 <label class="question-label" data-question-number="5">👥 Role Preference</label>
-                <div class="radio-group">
-                    <div class="radio-item">
-                        <input type="radio" id="role_0" name="role" value="0">
-                        <label for="role_0">👑 Leader</label>
-                    </div>
-                    <div class="radio-item">
-                        <input type="radio" id="role_1" name="role" value="1">
-                        <label for="role_1">🤝 Follower</label>
-                    </div>
-                    <div class="radio-item">
-                        <input type="radio" id="role_none" name="role" value="" checked>
-                        <label for="role_none">🤷 No Preference</label>
+                <div class="instruction-box">
+                    <div class="instruction-text">Your preferred role in the team</div>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="role_0" name="role" value="0">
+                            <label for="role_0">👑 Leader</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="role_1" name="role" value="1">
+                            <label for="role_1">🤝 Follower</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="role_none" name="role" value="" checked>
+                            <label for="role_none">🤷 No Preference</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -273,22 +299,25 @@ This file was automatically generated/modified by an AI assistant.
             <!-- Teamwork Style -->
             <div class="form-group">
                 <label class="question-label" data-question-number="6">🤝 Teamwork Style Preference</label>
-                <div class="radio-group">
-                    <div class="radio-item">
-                        <input type="radio" id="teamwork_0" name="teamwork_style" value="0">
-                        <label for="teamwork_0">💻 Online Meeting</label>
-                    </div>
-                    <div class="radio-item">
-                        <input type="radio" id="teamwork_1" name="teamwork_style" value="1">
-                        <label for="teamwork_1">🤝 Offline Meeting</label>
-                    </div>
-                    <div class="radio-item">
-                        <input type="radio" id="teamwork_2" name="teamwork_style" value="2">
-                        <label for="teamwork_2">🧩 Divide and Conquer</label>
-                    </div>
-                    <div class="radio-item">
-                        <input type="radio" id="teamwork_none" name="teamwork_style" value="" checked>
-                        <label for="teamwork_none">🤷 No Preference</label>
+                <div class="instruction-box">
+                    <div class="instruction-text">How you prefer to work with your team</div>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="teamwork_0" name="teamwork_style" value="0">
+                            <label for="teamwork_0">💻 Online Meeting</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="teamwork_1" name="teamwork_style" value="1">
+                            <label for="teamwork_1">🤝 Offline Meeting</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="teamwork_2" name="teamwork_style" value="2">
+                            <label for="teamwork_2">🧩 Divide and Conquer</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="teamwork_none" name="teamwork_style" value="" checked>
+                            <label for="teamwork_none">🤷 No Preference</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -296,22 +325,25 @@ This file was automatically generated/modified by an AI assistant.
             <!-- Pace Preference -->
             <div class="form-group">
                 <label class="question-label" data-question-number="7">⏱️ Pace Preference</label>
-                <div class="radio-group">
-                    <div class="radio-item">
-                        <input type="radio" id="pace_0" name="pace" value="0">
-                        <label for="pace_0">⚡ Finish Early</label>
-                    </div>
-                    <div class="radio-item">
-                        <input type="radio" id="pace_1" name="pace" value="1">
-                        <label for="pace_1">🕐 Finish Late</label>
-                    </div>
-                    <div class="radio-item">
-                        <input type="radio" id="pace_2" name="pace" value="2">
-                        <label for="pace_2">📈 Little by Little</label>
-                    </div>
-                    <div class="radio-item">
-                        <input type="radio" id="pace_none" name="pace" value="" checked>
-                        <label for="pace_none">🤷 No Preference</label>
+                <div class="instruction-box">
+                    <div class="instruction-text">Your preferred work pace for project completion</div>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="pace_0" name="pace" value="0">
+                            <label for="pace_0">⚡ Finish Early</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="pace_1" name="pace" value="1">
+                            <label for="pace_1">🕐 Finish Late</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="pace_2" name="pace" value="2">
+                            <label for="pace_2">📈 Little by Little</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="pace_none" name="pace" value="" checked>
+                            <label for="pace_none">🤷 No Preference</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -319,42 +351,45 @@ This file was automatically generated/modified by an AI assistant.
             <!-- Backgrounds -->
             <div class="form-group">
                 <label class="question-label" data-question-number="8">💼 Professional Background (Multiple Selection)</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="bg_0" name="backgrounds" value="0">
-                        <label for="bg_0">💻 Technology/Math</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="bg_1" name="backgrounds" value="1">
-                        <label for="bg_1">💰 Finance</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="bg_2" name="backgrounds" value="2">
-                        <label for="bg_2">💼 Consulting</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="bg_3" name="backgrounds" value="3">
-                        <label for="bg_3">🔬 Healthcare & Biotech</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="bg_4" name="backgrounds" value="4">
-                        <label for="bg_4">📚 Education & Research</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="bg_5" name="backgrounds" value="5">
-                        <label for="bg_5">🎨 Arts, Media & Design</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="bg_6" name="backgrounds" value="6">
-                        <label for="bg_6">🏗️ Architecture & Engineering</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="bg_7" name="backgrounds" value="7">
-                        <label for="bg_7">📊 Business & Operations</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="bg_8" name="backgrounds" value="8">
-                        <label for="bg_8">➕ Others</label>
+                <div class="instruction-box">
+                    <div class="instruction-text">Select all that apply to your professional background</div>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="bg_0" name="backgrounds" value="0">
+                            <label for="bg_0">💻 Technology/Math</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="bg_1" name="backgrounds" value="1">
+                            <label for="bg_1">💰 Finance</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="bg_2" name="backgrounds" value="2">
+                            <label for="bg_2">💼 Consulting</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="bg_3" name="backgrounds" value="3">
+                            <label for="bg_3">🔬 Healthcare & Biotech</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="bg_4" name="backgrounds" value="4">
+                            <label for="bg_4">📚 Education & Research</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="bg_5" name="backgrounds" value="5">
+                            <label for="bg_5">🎨 Arts, Media & Design</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="bg_6" name="backgrounds" value="6">
+                            <label for="bg_6">🏗️ Architecture & Engineering</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="bg_7" name="backgrounds" value="7">
+                            <label for="bg_7">📊 Business & Operations</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="bg_8" name="backgrounds" value="8">
+                            <label for="bg_8">➕ Others</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -362,14 +397,17 @@ This file was automatically generated/modified by an AI assistant.
             <!-- Background Preference -->
             <div class="form-group">
                 <label class="question-label" data-question-number="9">🌐 Teammate Background Preference</label>
-                <div class="radio-group">
-                    <div class="radio-item">
-                        <input type="radio" id="bg_pref_0" name="backgrounds_preference" value="0" checked>
-                        <label for="bg_pref_0">👥 Similar Backgrounds</label>
-                    </div>
-                    <div class="radio-item">
-                        <input type="radio" id="bg_pref_1" name="backgrounds_preference" value="1">
-                        <label for="bg_pref_1">🌈 Different Backgrounds</label>
+                <div class="instruction-box">
+                    <div class="instruction-text">Your preference for teammates' professional backgrounds</div>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="bg_pref_0" name="backgrounds_preference" value="0" checked>
+                            <label for="bg_pref_0">👥 Similar Backgrounds</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="bg_pref_1" name="backgrounds_preference" value="1">
+                            <label for="bg_pref_1">🌈 Different Backgrounds</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -377,34 +415,37 @@ This file was automatically generated/modified by an AI assistant.
             <!-- Hobbies -->
             <div class="form-group">
                 <label class="question-label" data-question-number="10">🎨 Hobbies (Multiple Selection)</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="hobby_0" name="hobbies" value="0">
-                        <label for="hobby_0">🎮 Gaming</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="hobby_1" name="hobbies" value="1">
-                        <label for="hobby_1">⚽ Outdoor Sports & Fitness</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="hobby_2" name="hobbies" value="2">
-                        <label for="hobby_2">✈️ Travel & Adventure</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="hobby_3" name="hobbies" value="3">
-                        <label for="hobby_3">🔧 Tech & DIY</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="hobby_4" name="hobbies" value="4">
-                        <label for="hobby_4">🎨 Arts & Media</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="hobby_5" name="hobbies" value="5">
-                        <label for="hobby_5">🍳 Food & Cooking</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="hobby_6" name="hobbies" value="6">
-                        <label for="hobby_6">🎵 Music & Performing</label>
+                <div class="instruction-box">
+                    <div class="instruction-text">Select all hobbies that interest you</div>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hobby_0" name="hobbies" value="0">
+                            <label for="hobby_0">🎮 Gaming</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hobby_1" name="hobbies" value="1">
+                            <label for="hobby_1">⚽ Outdoor Sports & Fitness</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hobby_2" name="hobbies" value="2">
+                            <label for="hobby_2">✈️ Travel & Adventure</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hobby_3" name="hobbies" value="3">
+                            <label for="hobby_3">🔧 Tech & DIY</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hobby_4" name="hobbies" value="4">
+                            <label for="hobby_4">🎨 Arts & Media</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hobby_5" name="hobbies" value="5">
+                            <label for="hobby_5">🍳 Food & Cooking</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hobby_6" name="hobbies" value="6">
+                            <label for="hobby_6">🎵 Music & Performing</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -412,7 +453,10 @@ This file was automatically generated/modified by an AI assistant.
             <!-- Project Summary -->
             <div class="form-group">
                 <label for="project_summary" class="question-label" data-question-number="11">📝 Project Summary *</label>
-                <textarea id="project_summary" name="project_summary" required placeholder="Please describe your project ideas or expectations for the team..."></textarea>
+                <div class="instruction-box">
+                    <div class="instruction-text">Describe your project ideas or expectations for the team</div>
+                    <textarea id="project_summary" name="project_summary" required placeholder="Please describe your project ideas or expectations for the team..." style="width: 100%; margin-top: 8px;"></textarea>
+                </div>
             </div>
             
             <button type="submit" class="submit-btn" id="submitBtn">🚀 Submit Information</button>

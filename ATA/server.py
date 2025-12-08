@@ -12,11 +12,6 @@ import json
 # FastAPI application instance
 app = FastAPI()
 
-# Print version on startup
-print("=" * 50)
-print(f"| ATA API Server v{VERSION:<41} |")
-print("=" * 50)
-
 # Configure CORS to allow cross-origin requests
 app.add_middleware(
     CORSMiddleware,
