@@ -6,3 +6,4 @@ venv/
 ATA/student_data
 .env
 .env_fe
+/data/data.pkl
