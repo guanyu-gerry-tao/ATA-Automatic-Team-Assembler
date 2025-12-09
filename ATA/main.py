@@ -2,6 +2,24 @@ import ATA.pickle_ops as pickle_ops
 from ATA.models import Course, Student
 from ATA.config import VERSION
 import json
+import os
+import platform
+
+
+def clear_screen():
+    """Clear the terminal screen based on the operating system."""
+    if platform.system() == "Windows":
+        os.system('cls')
+    else:
+        os.system('clear')
+
+
+def print_header():
+    """Print the application header."""
+    print(f"+------------------------------------------+")
+    print(f"| " + f"ATA - Automatic Team Assembler v{VERSION}".ljust(40) + " |")
+    print(f"+------------------------------------------+")
+    print()
 
 
 def proceed_team_matching(max_size: int) -> None:
@@ -59,7 +77,7 @@ def display_all_students():
     # Display each student with their information
     for student in course.students:
         team_id = student.team_id if student.team_id else "None"  # show "None" if not in a team
-        print(f"  {student.first_name} | {student.email} | Team: {team_id}")  # formatted output
+        print(f"{student.first_name}".ljust(20) + " | " + f"{student.email}".ljust(30) + " | " + f"Team: {team_id}".ljust(10))  # formatted output
 
 
 def upload_test_data():
@@ -155,12 +173,6 @@ def main():
     Provides an interactive command-line interface for managing students and teams.
     Handles loading/saving course data and routing user commands to appropriate functions.
     """
-    # Display version information on startup
-    print(f"+------------------------------------------+")
-    print(f"| " + f"ATA - Automatic Team Assembler v{VERSION}".ljust(40) + " |")
-    print(f"+------------------------------------------+")
-    print()
-    
     # Initialize course data
     # Try to load existing course; if not found, create a new empty course
     try:
@@ -171,38 +183,55 @@ def main():
         # If loading fails (file doesn't exist or is corrupted), create new empty course
         course = Course([])  # create empty course
         pickle_ops.save_data(course)  # save empty course to initialize data file
+        clear_screen()
+        print_header()
         print("Initialized new empty course data file.")
+        input("\nPress Enter to continue...")
 
     # Main command loop - continuously prompt for user input
     while True:
+        clear_screen()  # Clear screen before showing menu
+        print_header()  # Display header
         inp = input(q)  # get user command input
         
         # Command: S - Display all current students
         if inp.lower() == "s":
+            clear_screen()
+            print_header()
             print(p)  # print result printing header
             display_all_students()  # show all students with their info
+            input("\nPress Enter to continue...")
         
         # Command: T - Run team matching algorithm
         elif inp.lower() == "t":
+            clear_screen()
+            print_header()
             print(p)  # print result printing header
             try:
                 team_size = int(input("Enter team size: "))  # prompt for max team size
             except ValueError:
                 # Handle invalid input (non-integer)
                 print("Invalid input, please enter a valid integer.")
+                input("\nPress Enter to continue...")
                 continue  # skip to next iteration, prompt again
             proceed_team_matching(team_size)  # run matching algorithm
             print("Team matching completed.")
             print("------------------------")
+            input("\nPress Enter to continue...")
         
         # Command: P - Print team matching results
         elif inp.lower() == "p":
+            clear_screen()
+            print_header()
             print(p)  # print result printing header
             course = pickle_ops.load_data()  # reload course data to get latest results
             course.print_result()  # display formatted team results
+            input("\nPress Enter to continue...")
         
         # Command: R - Reset system (delete all students)
         elif inp.lower() == "r":
+            clear_screen()
+            print_header()
             print(p)  # print result printing header
             # Ask for confirmation before destructive operation
             confirm = input("Are you sure you want to reset the system (delete all students)? (y/n): ")
@@ -210,31 +239,51 @@ def main():
                 course = Course([])  # create empty course (deletes all students)
                 pickle_ops.save_data(course)  # save empty course
                 print("System has been fully reset (all students deleted).")
+            input("\nPress Enter to continue...")
             # If user says no, silently continue (no action taken)
         
         # Command: U - Clear all team assignments but keep students
         elif inp.lower() == "u":
+            clear_screen()
+            print_header()
             print(p)  # print result printing header
-            clear_team_assignments_cli()  # remove team assignments, preserve students
+            # Ask for confirmation before clearing team assignments
+            confirm = input("Are you sure you want to clear all team assignments (students will be kept)? (y/n): ")
+            if confirm.lower() in ("y", "yes"):  # check if user confirmed
+                clear_team_assignments_cli()  # remove team assignments, preserve students
+            else:
+                print("Operation cancelled.")
+            input("\nPress Enter to continue...")
         
         # Command: D - Delete a student by email
         elif inp.lower() == "d":
+            clear_screen()
+            print_header()
             print(p)  # print result printing header
             remove_student_cli()  # prompt for email and remove student
+            input("\nPress Enter to continue...")
         
         # Command: test - Upload test data from JSON file
         elif inp.lower() == "test":
+            clear_screen()
+            print_header()
             print(p)  # print result printing header
-            upload_test_data()  # load and add test students from test_user.json
-            print("TEST DATA HAS BEEN UPLOADED")
-            print("---------------------------")
-
+            # Ask for confirmation before uploading test data
+            confirm = input("Are you sure you want to upload test data (this will update/add students)? (y/n): ")
+            if confirm.lower() in ("y", "yes"):  # check if user confirmed
+                upload_test_data()  # load and add test students from test_user.json
+                print("TEST DATA HAS BEEN UPLOADED")
+                print("---------------------------")
+            else:
+                print("Operation cancelled.")
+            input("\nPress Enter to continue...")
         
         # Invalid command - user entered something not recognized
         else:
+            clear_screen()
+            print_header()
             print("Invalid command, please try again.")  # show error message
-        
-        print()  # blank line after each command for better readability
+            input("\nPress Enter to continue...")
 
 
 if __name__ == "__main__":
