@@ -6,4 +6,7 @@ venv/
 ATA/student_data
 .env
 # .env_fe is a template file and should be committed to git
-/data/data.pkl
+# Ignore all files in data directory but keep the folder
+data/*
+# Keep the .gitkeep file to preserve the folder structure
+!data/.gitkeep
