@@ -13,6 +13,7 @@ The ATA system converts various student attributes (skill level, ambition, role 
 - 🔄 **Flexible Configuration**: Supports custom team sizes and matching weights
 - 💻 **Dual Mode Operation**: Supports both Command Line Interface (CLI) and Web API usage
 - 🌐 **Web Frontend**: Provides a user-friendly interface for student information submission and result viewing
+- 📊 **Object Oriented Design**: The program is heavily using OOP design principle to reuse codes, methods, and properties.
 - 🐳 **Docker Support**: Containerized deployment, ready to use out of the box
 
 ## 🏗️ Project Structure

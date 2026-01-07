@@ -1,0 +1,2 @@
+Guanyu Tao:		Algorithm / OOP architecture / Deployment
+Yiying Xie:		Server / Console / Data Localization
